@@ -1,0 +1,13 @@
+# Web framework and server
+fastapi==0.133.1
+uvicorn==0.41.0
+python-multipart==0.0.22
+
+# Settings (.env file)
+pydantic-settings==2.13.1
+python-dotenv==1.2.1
+
+# AI, vector database and PDF reading
+google-genai==1.65.0
+chromadb==1.5.1
+pypdf==6.7.3

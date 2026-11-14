@@ -1,0 +1,31 @@
+"""Creates the FastAPI app and connects all the routes."""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.routes import chat, documents, health
+from app.core.config import get_settings
+
+# Load settings now, so a missing GOOGLE_API_KEY stops the server immediately
+# with a clear message, instead of failing later on the first request.
+settings = get_settings()
+
+app = FastAPI(
+    title="AI Researcher API",
+    version="2.0.0",
+    description="Ask questions about your PDF documents in Hebrew or English, "
+    "with page citations for every answer.",
+)
+
+# CORS: browsers block a website from calling an API on a different address,
+# unless the API allows it. We allow only our own frontend.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.frontend_origin],
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_headers=["Content-Type"],
+)
+
+app.include_router(health.router)
+app.include_router(documents.router)
+app.include_router(chat.router)

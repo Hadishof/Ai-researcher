@@ -11,20 +11,25 @@ When all phases are done, `v2` is merged into `main`.
 **Goal:** Turn the single `main.py` into a clean, organized backend that is
 easy to read, test and explain, and fix the problems in the current version.
 
-- [ ] Split `main.py` into a small package (settings, API routes, PDF ingestion, retrieval, answer generation)
-- [ ] Load settings (API key, model names, database folder) from one place, and fail with a clear message if the API key is missing
-- [ ] Replace the deprecated `google-generativeai` SDK with `google-genai`
-- [ ] Decide whether to keep LangChain or call ChromaDB and Gemini directly (simpler, fewer dependencies)
-- [ ] Return proper HTTP error codes instead of `{"error": ...}` with status 200
-- [ ] Save uploads to a safe temporary file instead of using the uploaded filename directly
-- [ ] Accept only PDF files and reject empty or unreadable ones
-- [ ] Avoid duplicate chunks when the same PDF is uploaded twice
-- [ ] Return the sources (file name and page number) with every answer
-- [ ] Ask questions with `POST` and a JSON body instead of a URL query string
-- [ ] Fix the broken character in the Hebrew/English prompt
-- [ ] Limit CORS to the frontend's address instead of allowing everything
-- [ ] Trim `requirements.txt` to only the packages the project actually uses
-- [ ] Add a `.env.example` file showing which settings are needed
+- [x] Split `main.py` into a `backend/app/` package (core, api/routes, schemas, services, db)
+- [x] Settings in one place with `pydantic-settings`; clear error if `GOOGLE_API_KEY` is missing
+- [x] Replace the deprecated `google-generativeai` SDK with `google-genai`
+- [x] Remove LangChain: call ChromaDB, Gemini and `pypdf` directly
+- [x] Gemini embeddings for both storing and searching; ChromaDB never creates its own
+- [x] Custom chunker: paragraphs first, then sentences, cut mid-text only as a last resort, with overlap (works with Hebrew)
+- [x] ChromaDB collection uses cosine distance
+- [x] Page-number citations with every answer
+- [x] "I couldn't find this in the documents" when no chunk is relevant enough
+- [x] Duplicate uploads blocked using the file's SHA-256 hash, which is also the document id
+- [x] Proper HTTP status codes with `HTTPException`
+- [x] Uploads are read in memory; the uploaded filename is never used as a file path
+- [x] Pydantic models for every request and response
+- [x] Wait and retry when Gemini's free-tier rate limit is reached
+- [x] CORS allows only the frontend address from settings
+- [x] Routes: `POST /documents`, `GET /documents`, `DELETE /documents/{id}`, `POST /chat`, `GET /health`
+- [x] `requirements.txt` trimmed to the packages actually used
+- [x] `.env.example` showing which settings are needed
+- [x] Remove `app.py` (Streamlit), to be replaced in Phase 3
 
 ## Phase 2: Backend tests (pytest, LLM mocked)
 
@@ -50,11 +55,10 @@ TypeScript (using Vite), with a chat, an upload panel and a sources list.
 - [ ] Chat window: send questions, show answers, keep the conversation on screen
 - [ ] Correct right-to-left display for Hebrew messages
 - [ ] Upload panel: pick a PDF, upload it, show progress and errors
-- [ ] Button to clear the knowledge base, with a confirmation step
+- [ ] List of uploaded documents, each with a delete button and a confirmation step
 - [ ] Sources list under each answer (file name and page)
 - [ ] Shared TypeScript types matching the backend's responses
 - [ ] Backend address set in one config place, not hard-coded
-- [ ] Remove `app.py` and Streamlit from the project
 
 ## Phase 4: Evaluation harness
 
@@ -67,7 +71,8 @@ guessing, using a fixed set of questions with known answers.
 - [ ] Script that checks retrieval accuracy: did the search find the right page?
 - [ ] Script that checks answer faithfulness: does the answer stick to the document and not make things up?
 - [ ] Save the results to a file so runs can be compared over time
-- [ ] Use the results to tune chunk size and number of retrieved chunks
+- [ ] Use the results to tune chunk size, number of retrieved chunks and the relevance limit (`MAX_DISTANCE`)
+- [ ] Benchmark our custom chunker against LangChain's RecursiveCharacterTextSplitter on the evaluation set (LangChain is used only inside `eval/`, never in the backend)
 
 ## Phase 5: Docker + docker-compose + GitHub Actions CI
 
