@@ -16,6 +16,9 @@ class Source(BaseModel):
     document_id: str
     filename: str
     page: int
+    # Similarity between the question and this page's best used chunk:
+    # 1 - cosine distance, so 1.0 = same meaning and higher is more relevant.
+    score: float
 
 
 class ChatResponse(BaseModel):

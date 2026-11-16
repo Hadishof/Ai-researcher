@@ -1,5 +1,6 @@
 """Turns text into Gemini embeddings and finds the chunks most relevant to a question."""
 
+import logging
 import re
 import time
 
@@ -9,6 +10,8 @@ from google.genai.errors import ClientError
 
 from app.core.config import Settings
 from app.db.vector_store import SearchResult, VectorStore
+
+logger = logging.getLogger(__name__)
 
 # Gemini accepts at most 100 texts per embedding request.
 EMBED_BATCH_SIZE = 100
@@ -70,9 +73,41 @@ def find_relevant_chunks(
     client: genai.Client,
     settings: Settings,
 ) -> list[SearchResult]:
-    """Return the closest chunks to the question, dropping any that are not close enough."""
+    """
+    Return the closest chunks to the question, dropping any that are not close enough.
+
+    A chunk is kept only if it passes both filters:
+    - absolute: its distance is at most MAX_DISTANCE
+    - relative: its distance is at most the best chunk's distance + RELATIVE_MARGIN
+    """
     query_embedding = embed_texts(
         client, [question], model=settings.embedding_model, task_type="RETRIEVAL_QUERY"
     )[0]
     results = store.search(query_embedding, top_k=settings.top_k)
-    return [result for result in results if result.distance <= settings.max_distance]
+    if not results:
+        return []
+
+    # Chroma returns results closest first, so the first one is the best match.
+    relative_limit = results[0].distance + settings.relative_margin
+    limit = min(settings.max_distance, relative_limit)
+
+    kept = []
+    for result in results:
+        keep = result.distance <= limit
+        logger.debug(
+            "%s page %d: distance %.3f -> %s",
+            result.filename,
+            result.page,
+            result.distance,
+            "kept" if keep else "dropped",
+        )
+        if keep:
+            kept.append(result)
+    logger.debug(
+        "Limits: max_distance=%.3f, relative=%.3f (best %.3f + margin %.3f)",
+        settings.max_distance,
+        relative_limit,
+        results[0].distance,
+        settings.relative_margin,
+    )
+    return kept

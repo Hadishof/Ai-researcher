@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, ValidationError, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -39,12 +40,19 @@ class Settings(BaseSettings):
     # Starting value from a quick test: relevant chunks scored about 0.24-0.35,
     # off-topic questions about 0.41-0.48. Phase 4 (evaluation) will tune it properly.
     max_distance: float = Field(default=0.38, ge=0, le=2)
+    # A chunk is also dropped if it is more than this much farther than the best chunk.
+    # This removes "somewhat related" pages when one page clearly matches best.
+    # Starting value; Phase 4 (evaluation) will tune it.
+    relative_margin: float = Field(default=0.05, ge=0, le=2)
 
     # Uploads
     max_upload_mb: int = Field(default=20, gt=0)
 
     # CORS: the only website address allowed to call this API
     frontend_origin: str = "http://localhost:5173"
+
+    # Logging: set LOG_LEVEL=DEBUG to see retrieval distances while testing
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
 
     @model_validator(mode="after")
     def check_overlap(self) -> "Settings":

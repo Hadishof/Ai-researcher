@@ -35,7 +35,7 @@ def chat(
             return not_found  # nothing relevant: answer honestly, without calling the LLM
 
         # 2. Ask Gemini to answer using only those chunks.
-        answer = generate_answer(client, settings.generation_model, question, chunks)
+        result = generate_answer(client, settings.generation_model, question, chunks)
     except APIError as error:
         if error.code == 429:
             raise HTTPException(
@@ -45,18 +45,32 @@ def chat(
         logger.exception("Gemini request failed")
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, "The AI service failed. Please try again.")
 
-    if is_not_found_answer(answer, question):
+    if is_not_found_answer(result.answer, question):
         return not_found
 
-    # 3. One source per (document, page), closest first.
+    # 3. Keep only the excerpts Gemini says it used. Excerpts are numbered from 1
+    #    in the prompt; numbers that don't match a real excerpt are ignored.
+    used_chunks = [
+        chunk for number, chunk in enumerate(chunks, 1) if number in result.used_excerpts
+    ]
+    if not used_chunks:
+        return not_found  # an answer that cites no excerpt is not backed by the documents
+
+    # 4. One source per (document, page), closest first. Chunks are already sorted
+    #    closest first, so the first chunk seen for a page has that page's best score.
     sources: list[Source] = []
     seen = set()
-    for chunk in chunks:
+    for chunk in used_chunks:
         key = (chunk.document_id, chunk.page)
         if key not in seen:
             seen.add(key)
             sources.append(
-                Source(document_id=chunk.document_id, filename=chunk.filename, page=chunk.page)
+                Source(
+                    document_id=chunk.document_id,
+                    filename=chunk.filename,
+                    page=chunk.page,
+                    score=round(1 - chunk.distance, 2),
+                )
             )
 
-    return ChatResponse(answer=answer, found=True, sources=sources)
+    return ChatResponse(answer=result.answer, found=True, sources=sources)
