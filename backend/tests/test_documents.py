@@ -38,6 +38,7 @@ def test_upload_pdf(upload, make_pdf, fake_gemini):
         "filename": "handbook.pdf",
         "pages": 4,
         "chunks": 4,  # each short page fits in one chunk
+        "conversation_count": 0,  # a new document is not in any conversation yet
     }
     # All chunks were embedded in one request, including the Hebrew page's text.
     assert len(fake_gemini.models.embed_calls) == 1
@@ -63,6 +64,21 @@ def test_upload_same_file_twice_is_rejected(upload, make_pdf, fake_gemini):
     assert response.status_code == 409
     # The duplicate was caught before embedding anything again.
     assert len(fake_gemini.models.embed_calls) == 1
+
+
+def test_duplicate_response_names_the_existing_document(upload, make_pdf):
+    data = make_pdf(HANDBOOK)
+    first = upload(data, "handbook.pdf").json()
+
+    response = upload(data, "another-name.pdf")
+
+    # The error message, plus the document already in the library (with its ORIGINAL name),
+    # so the frontend can add that document to the open chat.
+    assert response.json() == {
+        "detail": "This document was already uploaded.",
+        "document_id": first["document_id"],
+        "filename": "handbook.pdf",
+    }
 
 
 def test_upload_non_pdf_is_rejected(upload):
@@ -193,3 +209,79 @@ def test_delete_with_invalid_id_is_rejected(client):
     response = client.delete("/documents/not-a-real-id")
 
     assert response.status_code == 422  # the id must be 64 hex characters
+
+
+# --- Documents and conversations -----------------------------------------------
+
+
+def conversation_count(client, document_id: str) -> int:
+    documents = client.get("/documents").json()["documents"]
+    return next(d["conversation_count"] for d in documents if d["document_id"] == document_id)
+
+
+def test_conversation_count_is_the_number_of_chats_that_selected_it(
+    client, upload, make_pdf, new_conversation
+):
+    handbook = upload(make_pdf(HANDBOOK), "handbook.pdf").json()["document_id"]
+    other = upload(make_pdf(["Another document."]), "other.pdf").json()["document_id"]
+
+    new_conversation([handbook])
+    new_conversation([handbook, other])
+    new_conversation([])
+
+    assert conversation_count(client, handbook) == 2
+    assert conversation_count(client, other) == 1
+
+
+def test_conversation_count_comes_from_the_selection_not_from_old_answers(
+    client, upload, make_pdf, new_conversation, ask_in
+):
+    handbook = upload(make_pdf(HANDBOOK), "handbook.pdf").json()["document_id"]
+    conversation_id = new_conversation([handbook])
+    ask_in(conversation_id, "Who founded Nimbus Robotics?")  # an answer now cites the handbook
+
+    client.put(f"/conversations/{conversation_id}/documents", json={"document_ids": []})
+
+    assert conversation_count(client, handbook) == 0
+
+
+def test_deleting_a_document_removes_it_from_conversations(
+    client, upload, make_pdf, new_conversation
+):
+    handbook = upload(make_pdf(HANDBOOK), "handbook.pdf").json()["document_id"]
+    other = upload(make_pdf(["Another document."]), "other.pdf").json()["document_id"]
+    conversation_id = new_conversation([handbook, other])
+
+    client.delete(f"/documents/{handbook}")
+
+    documents = client.get(f"/conversations/{conversation_id}").json()["documents"]
+    assert documents == [{"document_id": other, "filename": "other.pdf"}]
+
+
+def test_old_answers_keep_sources_of_a_deleted_document(
+    client, upload, make_pdf, new_conversation, ask_in
+):
+    data = make_pdf(HANDBOOK)
+    handbook = upload(data, "handbook.pdf").json()["document_id"]
+    conversation_id = new_conversation([handbook])
+    answer = ask_in(conversation_id, "Who founded Nimbus Robotics?").json()
+
+    client.delete(f"/documents/{handbook}")
+
+    saved = client.get(f"/conversations/{conversation_id}").json()
+    assistant = saved["messages"][1]
+    assert assistant["content"] == answer["answer"]  # the answer's text is kept
+    assert assistant["sources"] == [
+        {
+            "document_id": handbook,
+            "filename": "handbook.pdf",  # saved with the message, so it can still be shown
+            "page": 1,
+            "score": 1.0,
+            "document_deleted": True,
+        }
+    ]
+
+    # Uploading the same file again gives the same id, so the source is normal again.
+    upload(data, "handbook.pdf")
+    sources = client.get(f"/conversations/{conversation_id}").json()["messages"][1]["sources"]
+    assert sources[0]["document_deleted"] is False

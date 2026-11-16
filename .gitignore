@@ -6,3 +6,6 @@ chroma_db/
 # Test coverage data
 .coverage
 htmlcov/
+
+# Saved conversations (SQLite database)
+backend/data/

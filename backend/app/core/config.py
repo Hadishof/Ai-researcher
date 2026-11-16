@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     chroma_path: Path = BACKEND_DIR / "chroma_db"
     collection_name: str = "documents"
 
+    # Saved conversations (SQLite). The folder is created automatically.
+    database_path: Path = BACKEND_DIR / "data" / "conversations.db"
+    # How many earlier messages are sent to Gemini when rewriting a follow-up question
+    # into a standalone one. 0 turns the rewrite off.
+    history_messages: int = Field(default=6, ge=0)
+
     # Chunking: the size and overlap of each text piece, in characters
     chunk_size: int = Field(default=1000, gt=0)
     chunk_overlap: int = Field(default=150, ge=0)

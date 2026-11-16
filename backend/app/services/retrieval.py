@@ -69,12 +69,16 @@ def embed_texts(
 
 def find_relevant_chunks(
     question: str,
+    document_ids: list[str],
     store: VectorStore,
     client: genai.Client,
     settings: Settings,
 ) -> list[SearchResult]:
     """
     Return the closest chunks to the question, dropping any that are not close enough.
+
+    Only chunks of the documents in `document_ids` are searched (the documents
+    selected for the conversation), so information from other documents never mixes in.
 
     A chunk is kept only if it passes both filters:
     - absolute: its distance is at most MAX_DISTANCE
@@ -83,7 +87,7 @@ def find_relevant_chunks(
     query_embedding = embed_texts(
         client, [question], model=settings.embedding_model, task_type="RETRIEVAL_QUERY"
     )[0]
-    results = store.search(query_embedding, top_k=settings.top_k)
+    results = store.search(query_embedding, top_k=settings.top_k, document_ids=document_ids)
     if not results:
         return []
 

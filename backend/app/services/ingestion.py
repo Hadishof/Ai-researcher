@@ -22,7 +22,11 @@ class NoTextError(Exception):
 
 
 class DuplicateDocumentError(Exception):
-    """This exact file was already uploaded."""
+    """This exact file was already uploaded. `existing` is the document already stored."""
+
+    def __init__(self, existing: DocumentInfo):
+        super().__init__("This document was already uploaded.")
+        self.existing = existing
 
 
 # Paragraphs are separated by one or more blank lines.
@@ -133,8 +137,9 @@ def ingest_pdf(
 ) -> DocumentInfo:
     """Fingerprint -> duplicate check -> read pages -> chunk -> embed -> save."""
     document_id = compute_document_id(data)
-    if store.document_exists(document_id):
-        raise DuplicateDocumentError()
+    existing = store.find_documents([document_id])
+    if existing:
+        raise DuplicateDocumentError(existing[0])
 
     pages = read_pdf_pages(data)
 

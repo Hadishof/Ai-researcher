@@ -75,10 +75,17 @@ class VectorStore:
             ],
         )
 
-    def search(self, query_embedding: list[float], top_k: int) -> list[SearchResult]:
+    def search(
+        self, query_embedding: list[float], top_k: int, document_ids: list[str]
+    ) -> list[SearchResult]:
+        """Find the closest chunks, searching ONLY the chunks of the given documents."""
+        if not document_ids:
+            return []
         result = self._collection.query(
             query_embeddings=[query_embedding],
             n_results=top_k,
+            # Metadata filter: Chroma skips every chunk whose document_id is not in the list.
+            where={"document_id": {"$in": document_ids}},
             include=["documents", "metadatas", "distances"],
         )
         # Chroma returns one list per query; we sent one query, so take index [0].
@@ -100,23 +107,37 @@ class VectorStore:
         return len(found["ids"]) > 0
 
     def list_documents(self) -> list[DocumentInfo]:
-        """Group all stored chunks by document."""
+        """All documents, sorted by filename."""
         all_chunks = self._collection.get(include=["metadatas"])
-        documents: dict[str, DocumentInfo] = {}
-        for meta in all_chunks["metadatas"]:
-            doc_id = meta["document_id"]
-            if doc_id not in documents:
-                documents[doc_id] = DocumentInfo(
-                    document_id=doc_id,
-                    filename=meta["filename"],
-                    pages=meta["page_count"],
-                    chunks=0,
-                )
-            documents[doc_id].chunks += 1
-        return sorted(documents.values(), key=lambda d: d.filename.lower())
+        return _group_by_document(all_chunks["metadatas"])
+
+    def find_documents(self, document_ids: list[str]) -> list[DocumentInfo]:
+        """Only the documents in the list that still exist, sorted by filename."""
+        if not document_ids:
+            return []
+        chunks = self._collection.get(
+            where={"document_id": {"$in": document_ids}}, include=["metadatas"]
+        )
+        return _group_by_document(chunks["metadatas"])
 
     def delete_document(self, document_id: str) -> None:
         self._collection.delete(where={"document_id": document_id})
+
+
+def _group_by_document(metadatas: list[dict]) -> list[DocumentInfo]:
+    """Turn a list of chunk metadata into one DocumentInfo per document, sorted by filename."""
+    documents: dict[str, DocumentInfo] = {}
+    for meta in metadatas:
+        doc_id = meta["document_id"]
+        if doc_id not in documents:
+            documents[doc_id] = DocumentInfo(
+                document_id=doc_id,
+                filename=meta["filename"],
+                pages=meta["page_count"],
+                chunks=0,
+            )
+        documents[doc_id].chunks += 1
+    return sorted(documents.values(), key=lambda d: d.filename.lower())
 
 
 @lru_cache

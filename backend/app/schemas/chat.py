@@ -2,13 +2,14 @@
 
 from typing import Annotated
 
-from pydantic import BaseModel, StringConstraints
+from pydantic import BaseModel, Field, StringConstraints
 
 # Leading/trailing spaces are removed; an empty question is rejected automatically (422).
 Question = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)]
 
 
 class ChatRequest(BaseModel):
+    conversation_id: int = Field(gt=0)  # the saved conversation this question belongs to
     question: Question
 
 

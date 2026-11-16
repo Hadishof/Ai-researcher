@@ -67,19 +67,46 @@ pytest --cov=app --cov-report=term-missing
 The tests need no API key and no internet: Gemini is replaced by a fake, and
 each test uses its own empty database in a temporary folder.
 
-## Phase 3: React + TypeScript frontend
+## Phase 3: Saved conversations + React frontend
 
-**Goal:** Replace Streamlit with a real web app built with React and
-TypeScript (using Vite), with a chat, an upload panel and a sources list.
+**Goal:** Save chats so they can be reopened and continued days later, then
+replace Streamlit with a real web app built with React and TypeScript (using
+Vite). Phase 3 has two steps; 3a is built and tested before 3b starts.
+
+### Step 3a: Backend support for saved conversations
+
+- [x] SQLite database (Python's built-in `sqlite3`, plain SQL, no ORM) in `backend/data/`, path in settings, ignored by git
+- [x] Tables `conversations` and `messages`; deleting a conversation deletes its messages (`ON DELETE CASCADE`)
+- [x] All SQL in one repository file: `app/db/conversation_store.py`; tables created automatically
+- [x] Routes: `POST /conversations`, `GET /conversations`, `GET /conversations/{id}`, `PATCH /conversations/{id}`, `DELETE /conversations/{id}`, `DELETE /conversations`
+- [x] `POST /chat` requires a `conversation_id` and saves the question and the answer (with sources)
+- [x] Title set automatically from the first question; can be renamed
+- [x] Follow-up questions: Gemini rewrites them into a standalone question (using the last few messages) before searching
+- [x] Each conversation chooses its own documents (table `conversation_documents`), so information from different documents never mixes between chats
+- [x] `POST /conversations` accepts the first documents; `PUT /conversations/{id}/documents` replaces the selection
+- [x] `/chat` searches only the conversation's documents (ChromaDB metadata filter); no documents selected gives a clear 400
+- [x] When the selected documents disagree, the answer says so and states what each document says
+- [x] Documents stay in one shared library; deleting chats never deletes documents
+- [x] `GET /documents` shows how many conversations have each document selected
+- [x] Deleting a document removes it from every conversation; old answers keep their sources, marked as "deleted"
+- [x] A duplicate upload (409) also returns the existing document's id and filename
+- [x] Tests for the store, every new route, cascade delete, delete-all, the rewrite step, per-chat documents and deleted-document sources
+
+### Step 3b: React + TypeScript frontend
 
 - [ ] Create the app in a `frontend/` folder with Vite
-- [ ] Chat window: send questions, show answers, keep the conversation on screen
+- [ ] Sidebar: new chat, list of saved chats, rename, delete (with confirmation), delete all (with confirmation)
+- [ ] Chat area: full history of the open chat, a distinct "not found" style, sources as small chips under each answer
+- [ ] The chat's documents as chips at the top, with a checkbox list to add or remove documents
+- [ ] A new chat asks to select or upload documents first; a PDF uploaded while a chat is open is added to it (also when it was already in the library)
+- [ ] Enter sends, Shift+Enter adds a new line, auto-scroll to the newest message
 - [ ] Correct right-to-left display for Hebrew messages
-- [ ] Upload panel: pick a PDF, upload it, show progress and errors
-- [ ] List of uploaded documents, each with a delete button and a confirmation step
-- [ ] Sources list under each answer (file name and page)
-- [ ] Shared TypeScript types matching the backend's responses
-- [ ] Backend address set in one config place, not hard-coded
+- [ ] Documents panel: upload a PDF with clear error messages, list documents, delete with a warning when chats use the document
+- [ ] Light and dark mode: follows the system, can be switched, the choice is remembered
+- [ ] Calm, precise design: one accent color, IBM Plex fonts (self-hosted), colors as CSS variables, WCAG AA contrast
+- [ ] All backend calls in one file, with TypeScript types matching the backend's responses
+- [ ] Backend address from `VITE_API_URL`, not hard-coded
+- [ ] Frontend tests with Vitest and React Testing Library (backend mocked)
 
 ## Phase 4: Evaluation harness
 
@@ -89,6 +116,7 @@ guessing, using a fixed set of questions with known answers.
 - [ ] Create an `eval/` folder
 - [ ] Pick one or more sample PDFs that can be shared publicly
 - [ ] Write about 30 questions (Hebrew and English) with the correct answer and the page it comes from
+- [ ] Include questions where two documents disagree, to check that the answer reports both instead of mixing them
 - [ ] Script that checks retrieval accuracy: did the search find the right page?
 - [ ] Script that checks answer faithfulness: does the answer stick to the document and not make things up?
 - [ ] Save the results to a file so runs can be compared over time
@@ -102,7 +130,7 @@ run the tests automatically on GitHub after every push.
 
 - [ ] `Dockerfile` for the backend
 - [ ] `Dockerfile` for the frontend
-- [ ] `docker-compose.yml` that starts both together, with the database saved between restarts
+- [ ] `docker-compose.yml` that starts both together, with both databases (ChromaDB and SQLite) saved between restarts
 - [ ] API key passed in through environment variables, never built into the image
 - [ ] GitHub Actions workflow that runs the backend tests on every push and pull request
 - [ ] The same workflow checks that the frontend builds

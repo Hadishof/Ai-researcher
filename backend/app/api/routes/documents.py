@@ -3,13 +3,19 @@
 import logging
 
 from fastapi import APIRouter, Depends, File, HTTPException, Path, UploadFile, status
+from fastapi.responses import JSONResponse
 from google import genai
 from google.genai.errors import APIError
 
 from app.core.config import Settings, get_settings
 from app.core.gemini import get_gemini_client
+from app.db.conversation_store import ConversationStore, get_conversation_store
 from app.db.vector_store import VectorStore, get_vector_store
-from app.schemas.documents import DocumentListResponse, DocumentResponse
+from app.schemas.documents import (
+    DocumentListResponse,
+    DocumentResponse,
+    DuplicateDocumentResponse,
+)
 from app.services.ingestion import (
     DuplicateDocumentError,
     InvalidPdfError,
@@ -32,13 +38,19 @@ DocumentId = Path(pattern=r"^[0-9a-f]{64}$", description="The document's SHA-256
 # request does not freeze the whole server.
 
 
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=DocumentResponse)
+@router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    response_model=DocumentResponse,
+    # Documents the 409 body in the API docs (/docs), since it is not the normal response.
+    responses={status.HTTP_409_CONFLICT: {"model": DuplicateDocumentResponse}},
+)
 def upload_document(
     file: UploadFile = File(...),
     store: VectorStore = Depends(get_vector_store),
     client: genai.Client = Depends(get_gemini_client),
     settings: Settings = Depends(get_settings),
-) -> DocumentResponse:
+) -> DocumentResponse | JSONResponse:
     max_bytes = settings.max_upload_mb * 1024 * 1024
     data = file.file.read(max_bytes + 1)  # read one extra byte to detect "too big"
 
@@ -54,8 +66,15 @@ def upload_document(
 
     try:
         info = ingest_pdf(data, clean_filename(file.filename), store, client, settings)
-    except DuplicateDocumentError:
-        raise HTTPException(status.HTTP_409_CONFLICT, "This document was already uploaded.")
+    except DuplicateDocumentError as error:
+        # Also return the document that is already in the library, so the frontend
+        # can add it to the open chat instead of uploading it again.
+        body = DuplicateDocumentResponse(
+            detail="This document was already uploaded.",
+            document_id=error.existing.document_id,
+            filename=error.existing.filename,
+        )
+        return JSONResponse(status_code=status.HTTP_409_CONFLICT, content=body.model_dump())
     except InvalidPdfError as error:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error))
     except NoTextError:
@@ -83,7 +102,11 @@ def upload_document(
 
 
 @router.get("", response_model=DocumentListResponse)
-def list_documents(store: VectorStore = Depends(get_vector_store)) -> DocumentListResponse:
+def list_documents(
+    store: VectorStore = Depends(get_vector_store),
+    conversations: ConversationStore = Depends(get_conversation_store),
+) -> DocumentListResponse:
+    counts = conversations.conversation_counts()  # one query for all documents
     return DocumentListResponse(
         documents=[
             DocumentResponse(
@@ -91,6 +114,7 @@ def list_documents(store: VectorStore = Depends(get_vector_store)) -> DocumentLi
                 filename=doc.filename,
                 pages=doc.pages,
                 chunks=doc.chunks,
+                conversation_count=counts.get(doc.document_id, 0),
             )
             for doc in store.list_documents()
         ]
@@ -101,7 +125,13 @@ def list_documents(store: VectorStore = Depends(get_vector_store)) -> DocumentLi
 def delete_document(
     document_id: str = DocumentId,
     store: VectorStore = Depends(get_vector_store),
+    conversations: ConversationStore = Depends(get_conversation_store),
 ) -> None:
+    """
+    Delete the document's chunks and remove it from every conversation's selection.
+    Saved answers that cite it keep their text; their sources are shown as "deleted".
+    """
     if not store.document_exists(document_id):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Document not found.")
     store.delete_document(document_id)
+    conversations.remove_document(document_id)
