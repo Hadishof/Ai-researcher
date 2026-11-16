@@ -22,6 +22,9 @@ For example, write "Support responds to critical problems within 4 hours."
 and not "Response within 4 hours."
 If excerpts from different documents disagree, do not combine them and do not choose one.
 Say that the documents disagree, and state what each document says, naming each document.
+Never mention excerpt numbers (such as "Excerpt 1") in the answer: they are internal
+labels the user never sees. When you refer to a source, use its document's filename
+without the .pdf extension (for example "policy-2024", not "Excerpt 2").
 In "used_excerpts", list the numbers of the excerpts your answer is based on,
 including every excerpt you mention when documents disagree."""
 

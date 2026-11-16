@@ -495,6 +495,15 @@ def test_conflicting_documents_are_both_sent_with_the_conflict_rule(
     assert {s["document_id"] for s in response.json()["sources"]} == {old_policy, new_policy}
 
 
+def test_answers_name_documents_not_excerpt_numbers(client, handbook_id, fake_gemini):
+    ask(client, "Who founded Nimbus Robotics?")
+
+    # Excerpt numbers are internal labels; the answer must use the document's filename.
+    instruction = fake_gemini.models.last_config.system_instruction
+    assert "Never mention excerpt numbers" in instruction
+    assert "without the .pdf extension" in instruction
+
+
 def test_400_when_the_conversation_has_no_documents_selected(
     client, handbook_id, fake_gemini, new_conversation, ask_in
 ):
