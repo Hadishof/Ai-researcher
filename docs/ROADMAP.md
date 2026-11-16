@@ -94,19 +94,19 @@ Vite). Phase 3 has two steps; 3a is built and tested before 3b starts.
 
 ### Step 3b: React + TypeScript frontend
 
-- [ ] Create the app in a `frontend/` folder with Vite
-- [ ] Sidebar: new chat, list of saved chats, rename, delete (with confirmation), delete all (with confirmation)
-- [ ] Chat area: full history of the open chat, a distinct "not found" style, sources as small chips under each answer
-- [ ] The chat's documents as chips at the top, with a checkbox list to add or remove documents
-- [ ] A new chat asks to select or upload documents first; a PDF uploaded while a chat is open is added to it (also when it was already in the library)
-- [ ] Enter sends, Shift+Enter adds a new line, auto-scroll to the newest message
-- [ ] Correct right-to-left display for Hebrew messages
-- [ ] Documents panel: upload a PDF with clear error messages, list documents, delete with a warning when chats use the document
-- [ ] Light and dark mode: follows the system, can be switched, the choice is remembered
-- [ ] Calm, precise design: one accent color, IBM Plex fonts (self-hosted), colors as CSS variables, WCAG AA contrast
-- [ ] All backend calls in one file, with TypeScript types matching the backend's responses
-- [ ] Backend address from `VITE_API_URL`, not hard-coded
-- [ ] Frontend tests with Vitest and React Testing Library (backend mocked)
+- [x] Create the app in a `frontend/` folder with Vite
+- [x] Sidebar: new chat, list of saved chats, rename, delete (with confirmation), delete all (with confirmation)
+- [x] Chat area: full history of the open chat, a distinct "not found" style, sources as small chips under each answer
+- [x] The chat's documents as chips at the top, with a checkbox list to add or remove documents
+- [x] A new chat asks to select or upload documents first; a PDF uploaded while a chat is open is added to it (also when it was already in the library)
+- [x] Enter sends, Shift+Enter adds a new line, auto-scroll to the newest message
+- [x] Correct right-to-left display for Hebrew messages
+- [x] Documents panel: upload a PDF with clear error messages, list documents, delete with a warning when chats use the document
+- [x] Light and dark mode: follows the system, can be switched, the choice is remembered
+- [x] Calm, precise design: one accent color, IBM Plex fonts (self-hosted), colors as CSS variables, WCAG AA contrast
+- [x] All backend calls in one file, with TypeScript types matching the backend's responses
+- [x] Backend address from `VITE_API_URL`, not hard-coded
+- [x] Frontend tests with Vitest and React Testing Library (backend mocked)
 
 ## Phase 4: Evaluation harness
 

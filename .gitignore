@@ -9,3 +9,7 @@ htmlcov/
 
 # Saved conversations (SQLite database)
 backend/data/
+
+# Frontend: installed packages and build output
+node_modules/
+frontend/dist/

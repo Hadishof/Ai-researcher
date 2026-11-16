@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Researcher</title>
+    <script>
+      // Apply the theme before the page is drawn, so it never flashes the wrong colors.
+      // Same rule as src/hooks/useTheme.ts: the saved choice, otherwise the system setting.
+      (function () {
+        var theme = null;
+        try {
+          theme = localStorage.getItem("theme");
+        } catch (error) {}
+        if (theme !== "light" && theme !== "dark") {
+          var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          theme = dark ? "dark" : "light";
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
