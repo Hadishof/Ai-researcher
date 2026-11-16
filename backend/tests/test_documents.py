@@ -1,8 +1,10 @@
 """Tests for POST /documents, GET /documents and DELETE /documents/{id}."""
 
 import hashlib
+from io import BytesIO
 
 from google.genai.errors import ClientError, ServerError
+from reportlab.pdfgen import canvas
 
 HANDBOOK = [
     "Nimbus Robotics was founded by Dana Levi.",
@@ -89,6 +91,29 @@ def test_upload_pdf_without_text_is_rejected(upload, make_pdf, fake_gemini):
     response = upload(make_pdf([""]), "scan.pdf")  # a page with no text, like a scanned image
 
     assert response.status_code == 422
+    assert fake_gemini.models.embed_calls == []
+
+
+def test_upload_damaged_pdf_is_rejected(upload, fake_gemini):
+    # Starts like a PDF (so it passes the first check), but the rest is not a real PDF.
+    response = upload(b"%PDF-1.7\nthis is not really a pdf", "broken.pdf")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "This PDF is damaged or cannot be read."
+    assert fake_gemini.models.embed_calls == []
+
+
+def test_upload_password_protected_pdf_is_rejected(upload, fake_gemini):
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, encrypt="secret")  # reportlab encrypts it with this password
+    pdf.drawString(40, 800, "Confidential text.")
+    pdf.showPage()
+    pdf.save()
+
+    response = upload(buffer.getvalue(), "locked.pdf")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "This PDF is password-protected."
     assert fake_gemini.models.embed_calls == []
 
 
