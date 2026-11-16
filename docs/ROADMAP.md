@@ -36,15 +36,36 @@ easy to read, test and explain, and fix the problems in the current version.
 **Goal:** Prove the backend works with automatic tests that run fast, cost
 nothing, and never call the real Gemini API.
 
-- [ ] Set up `pytest` and a `tests/` folder
-- [ ] Replace Gemini with a fake ("mock") in tests so results are predictable
-- [ ] Test PDF upload: success, wrong file type, empty file
-- [ ] Test asking a question: answer and sources are returned
-- [ ] Test asking when no documents are uploaded yet
-- [ ] Test clearing the knowledge base
-- [ ] Test text chunking on its own
-- [ ] Use a temporary database folder so tests never touch real data
-- [ ] All tests pass with one command: `pytest`
+- [x] Set up `pytest` and a `tests/` folder
+- [x] Replace Gemini with a fake ("mock") in tests so results are predictable
+- [x] Use a temporary database folder so tests never touch real data
+- [x] Build small test PDFs inside the tests, including a Hebrew page
+- [x] Test text chunking on its own (paragraphs, sentences, long sentences, overlap, Hebrew)
+- [x] Test PDF upload: success, duplicate, wrong file type, empty file, too large
+- [x] Test listing and deleting documents
+- [x] Test asking a question: answer and page sources are returned
+- [x] Test "not found": nothing relevant, or no documents uploaded yet (the LLM is not called)
+- [x] Test the relevance filters and that only the excerpts the LLM used become sources
+- [x] Test Gemini failures: rate limit (429, with retries) and other errors (502)
+- [x] All tests pass with one command: `pytest`
+
+### How to run tests
+
+From the `backend/` folder, with the virtual environment active:
+
+```
+pip install -r requirements-dev.txt
+pytest
+```
+
+To also see which lines of code the tests run (coverage):
+
+```
+pytest --cov=app --cov-report=term-missing
+```
+
+The tests need no API key and no internet: Gemini is replaced by a fake, and
+each test uses its own empty database in a temporary folder.
 
 ## Phase 3: React + TypeScript frontend
 
