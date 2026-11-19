@@ -1,0 +1,3520 @@
+{
+  "info": {
+    "date": "2026-11-19 22:50",
+    "questions": 40,
+    "answerable": 35,
+    "not_found": 5,
+    "embedding_model": "gemini-embedding-001",
+    "top_k": 5,
+    "current": {
+      "chunk_size": 1000,
+      "max_distance": 0.38,
+      "relative_margin": 0.05
+    }
+  },
+  "experiments": [
+    "chunk",
+    "splitter",
+    "threshold",
+    "margin"
+  ],
+  "setups": {
+    "ours-500": {
+      "chunks": 92,
+      "ranking": {
+        "metrics": {
+          "hit@1": {
+            "overall": {
+              "value": 0.9714285714285714,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 1.0,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 1.0,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@3": {
+            "overall": {
+              "value": 1.0,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 1.0,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 1.0,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@5": {
+            "overall": {
+              "value": 1.0,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 1.0,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 1.0,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "mrr": {
+            "overall": {
+              "value": 0.980952380952381,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 1.0,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9333333333333333,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 1.0,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.3333333333333333,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          }
+        },
+        "records": [
+          {
+            "id": "en-01",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-03",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-04",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-05",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-06",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-07",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-08",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-10",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-11",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-12",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-13",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-14",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-15",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-17",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-18",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-22",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-23",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-24",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-27",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-28",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-01",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-03",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-04",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-05",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-08",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-10",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-11",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-01",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-04",
+            "language": "he",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "nf-02",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-03",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-04",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-06",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "fu-02",
+            "language": "he",
+            "type": "follow_up",
+            "hit@1": false,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 0.3333333333333333
+          },
+          {
+            "id": "cf-01",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "cf-03",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-01",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-03",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          }
+        ]
+      }
+    },
+    "ours-1000": {
+      "chunks": 49,
+      "ranking": {
+        "metrics": {
+          "hit@1": {
+            "overall": {
+              "value": 0.9142857142857143,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.92,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.9,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@3": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@5": {
+            "overall": {
+              "value": 0.9714285714285714,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "mrr": {
+            "overall": {
+              "value": 0.9380952380952382,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.9433333333333332,
+                "count": 25
+              },
+              "he": {
+                "value": 0.925,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.9291666666666666,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.25,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          }
+        },
+        "records": [
+          {
+            "id": "en-01",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-03",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-04",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-05",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-06",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-07",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-08",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-10",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-11",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-12",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-13",
+            "language": "en",
+            "type": "factual",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": false,
+            "mrr": 0.08333333333333333
+          },
+          {
+            "id": "en-14",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-15",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-17",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-18",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-22",
+            "language": "en",
+            "type": "factual",
+            "hit@1": false,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 0.5
+          },
+          {
+            "id": "en-23",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-24",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-27",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-28",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-01",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-03",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-04",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-05",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-08",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-10",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-11",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-01",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-04",
+            "language": "he",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "nf-02",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-03",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-04",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-06",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "fu-02",
+            "language": "he",
+            "type": "follow_up",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": true,
+            "mrr": 0.25
+          },
+          {
+            "id": "cf-01",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "cf-03",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-01",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-03",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          }
+        ]
+      }
+    },
+    "ours-1500": {
+      "chunks": 39,
+      "ranking": {
+        "metrics": {
+          "hit@1": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@3": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@5": {
+            "overall": {
+              "value": 0.9714285714285714,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "mrr": {
+            "overall": {
+              "value": 0.9525974025974027,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.9636363636363636,
+                "count": 25
+              },
+              "he": {
+                "value": 0.925,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.9545454545454545,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.25,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          }
+        },
+        "records": [
+          {
+            "id": "en-01",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-03",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-04",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-05",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-06",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-07",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-08",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-10",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-11",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-12",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-13",
+            "language": "en",
+            "type": "factual",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": false,
+            "mrr": 0.09090909090909091
+          },
+          {
+            "id": "en-14",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-15",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-17",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-18",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-22",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-23",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-24",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-27",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-28",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-01",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-03",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-04",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-05",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-08",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-10",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-11",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-01",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-04",
+            "language": "he",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "nf-02",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-03",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-04",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-06",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "fu-02",
+            "language": "he",
+            "type": "follow_up",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": true,
+            "mrr": 0.25
+          },
+          {
+            "id": "cf-01",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "cf-03",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-01",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-03",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          }
+        ]
+      }
+    },
+    "langchain-500": {
+      "chunks": 90,
+      "ranking": {
+        "metrics": {
+          "hit@1": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@3": {
+            "overall": {
+              "value": 1.0,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 1.0,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 1.0,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@5": {
+            "overall": {
+              "value": 1.0,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 1.0,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 1.0,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "mrr": {
+            "overall": {
+              "value": 0.9619047619047618,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.9733333333333333,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9333333333333333,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.9666666666666666,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.3333333333333333,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          }
+        },
+        "records": [
+          {
+            "id": "en-01",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-03",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-04",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-05",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-06",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-07",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-08",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-10",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-11",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-12",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-13",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-14",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-15",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-17",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-18",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-22",
+            "language": "en",
+            "type": "factual",
+            "hit@1": false,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 0.3333333333333333
+          },
+          {
+            "id": "en-23",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-24",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-27",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-28",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-01",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-03",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-04",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-05",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-08",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-10",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-11",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-01",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-04",
+            "language": "he",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "nf-02",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-03",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-04",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-06",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "fu-02",
+            "language": "he",
+            "type": "follow_up",
+            "hit@1": false,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 0.3333333333333333
+          },
+          {
+            "id": "cf-01",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "cf-03",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-01",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-03",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          }
+        ]
+      }
+    },
+    "langchain-1000": {
+      "chunks": 49,
+      "ranking": {
+        "metrics": {
+          "hit@1": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@3": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@5": {
+            "overall": {
+              "value": 0.9714285714285714,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "mrr": {
+            "overall": {
+              "value": 0.9521978021978023,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.963076923076923,
+                "count": 25
+              },
+              "he": {
+                "value": 0.925,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.9538461538461538,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.25,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          }
+        },
+        "records": [
+          {
+            "id": "en-01",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-03",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-04",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-05",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-06",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-07",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-08",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-10",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-11",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-12",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-13",
+            "language": "en",
+            "type": "factual",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": false,
+            "mrr": 0.07692307692307693
+          },
+          {
+            "id": "en-14",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-15",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-17",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-18",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-22",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-23",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-24",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-27",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-28",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-01",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-03",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-04",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-05",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-08",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-10",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-11",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-01",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-04",
+            "language": "he",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "nf-02",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-03",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-04",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-06",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "fu-02",
+            "language": "he",
+            "type": "follow_up",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": true,
+            "mrr": 0.25
+          },
+          {
+            "id": "cf-01",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "cf-03",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-01",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-03",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          }
+        ]
+      }
+    },
+    "langchain-1500": {
+      "chunks": 39,
+      "ranking": {
+        "metrics": {
+          "hit@1": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@3": {
+            "overall": {
+              "value": 0.9428571428571428,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 0.9,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "hit@5": {
+            "overall": {
+              "value": 0.9714285714285714,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.96,
+                "count": 25
+              },
+              "he": {
+                "value": 1.0,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.95,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 1.0,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          },
+          "mrr": {
+            "overall": {
+              "value": 0.9521978021978023,
+              "count": 35
+            },
+            "by_language": {
+              "en": {
+                "value": 0.963076923076923,
+                "count": 25
+              },
+              "he": {
+                "value": 0.925,
+                "count": 10
+              }
+            },
+            "by_type": {
+              "conflict": {
+                "value": 1.0,
+                "count": 2
+              },
+              "cross_lingual": {
+                "value": 1.0,
+                "count": 4
+              },
+              "distractor": {
+                "value": 1.0,
+                "count": 8
+              },
+              "factual": {
+                "value": 0.9538461538461538,
+                "count": 20
+              },
+              "follow_up": {
+                "value": 0.25,
+                "count": 1
+              },
+              "not_found": {
+                "value": null,
+                "count": 0
+              }
+            }
+          }
+        },
+        "records": [
+          {
+            "id": "en-01",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-03",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-04",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-05",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-06",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-07",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-08",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-10",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-11",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-12",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-13",
+            "language": "en",
+            "type": "factual",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": false,
+            "mrr": 0.07692307692307693
+          },
+          {
+            "id": "en-14",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-15",
+            "language": "en",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-17",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-18",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-22",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-23",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-24",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-27",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "en-28",
+            "language": "en",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-01",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-03",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-04",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-05",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-08",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-10",
+            "language": "he",
+            "type": "distractor",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "he-11",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-01",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "x-04",
+            "language": "he",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "nf-02",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-03",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-04",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "nf-06",
+            "language": "en",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          },
+          {
+            "id": "fu-02",
+            "language": "he",
+            "type": "follow_up",
+            "hit@1": false,
+            "hit@3": false,
+            "hit@5": true,
+            "mrr": 0.25
+          },
+          {
+            "id": "cf-01",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "cf-03",
+            "language": "en",
+            "type": "conflict",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-01",
+            "language": "he",
+            "type": "factual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-02",
+            "language": "en",
+            "type": "cross_lingual",
+            "hit@1": true,
+            "hit@3": true,
+            "hit@5": true,
+            "mrr": 1.0
+          },
+          {
+            "id": "dm-03",
+            "language": "he",
+            "type": "not_found",
+            "hit@1": null,
+            "hit@3": null,
+            "hit@5": null,
+            "mrr": null
+          }
+        ]
+      }
+    }
+  },
+  "threshold_margin": 0.05,
+  "threshold_sweep": [
+    {
+      "max_distance": 0.26,
+      "page_kept": 19,
+      "answerable": 35,
+      "blocked": 3,
+      "not_found": 5,
+      "conflicts_all_pages": 0,
+      "conflicts": 2,
+      "avg_chunks_sent": 1.15
+    },
+    {
+      "max_distance": 0.28,
+      "page_kept": 26,
+      "answerable": 35,
+      "blocked": 3,
+      "not_found": 5,
+      "conflicts_all_pages": 0,
+      "conflicts": 2,
+      "avg_chunks_sent": 1.925
+    },
+    {
+      "max_distance": 0.3,
+      "page_kept": 29,
+      "answerable": 35,
+      "blocked": 2,
+      "not_found": 5,
+      "conflicts_all_pages": 0,
+      "conflicts": 2,
+      "avg_chunks_sent": 2.275
+    },
+    {
+      "max_distance": 0.32,
+      "page_kept": 33,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 2.775
+    },
+    {
+      "max_distance": 0.34,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 2.9
+    },
+    {
+      "max_distance": 0.36,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.05
+    },
+    {
+      "max_distance": 0.38,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 0,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.075
+    },
+    {
+      "max_distance": 0.4,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 0,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.1
+    },
+    {
+      "max_distance": 0.42,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 0,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.1
+    },
+    {
+      "max_distance": 0.44,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 0,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.1
+    },
+    {
+      "max_distance": 0.46,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 0,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.1
+    },
+    {
+      "max_distance": 0.48,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 0,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.1
+    },
+    {
+      "max_distance": 0.5,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 0,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.1
+    }
+  ],
+  "margin_sweep": [
+    {
+      "margin": 0.02,
+      "page_kept": 32,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 0,
+      "conflicts": 2,
+      "avg_chunks_sent": 1.55
+    },
+    {
+      "margin": 0.03,
+      "page_kept": 32,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 0,
+      "conflicts": 2,
+      "avg_chunks_sent": 1.825
+    },
+    {
+      "margin": 0.05,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 2.9
+    },
+    {
+      "margin": 0.08,
+      "page_kept": 34,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 1,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.55
+    },
+    {
+      "margin": 0.1,
+      "page_kept": 35,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 2,
+      "conflicts": 2,
+      "avg_chunks_sent": 3.875
+    },
+    {
+      "margin": 0.15,
+      "page_kept": 35,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 2,
+      "conflicts": 2,
+      "avg_chunks_sent": 4.05
+    },
+    {
+      "margin": 0.2,
+      "page_kept": 35,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 2,
+      "conflicts": 2,
+      "avg_chunks_sent": 4.05
+    },
+    {
+      "margin": null,
+      "page_kept": 35,
+      "answerable": 35,
+      "blocked": 1,
+      "not_found": 5,
+      "conflicts_all_pages": 2,
+      "conflicts": 2,
+      "avg_chunks_sent": 4.05
+    }
+  ],
+  "suggested": {
+    "setup": "ours-500",
+    "chunk_size": 500,
+    "max_distance": 0.34,
+    "relative_margin": 0.1
+  },
+  "misses": [
+    {
+      "id": "nf-02",
+      "language": "en",
+      "type": "not_found",
+      "problem": "not blocked",
+      "question": "Does Orion sell a solar-powered purification unit?",
+      "expected": [],
+      "got": [
+        "Orion_Water_Product_Manual_2026.pdf p.2 (0.232)",
+        "Orion_Water_Product_Manual_2026.pdf p.2 (0.259)",
+        "Orion_Water_Product_Manual_2026.pdf p.5 (0.272)"
+      ]
+    },
+    {
+      "id": "nf-03",
+      "language": "en",
+      "type": "not_found",
+      "problem": "not blocked",
+      "question": "What was Orion's annual revenue in 2025?",
+      "expected": [],
+      "got": [
+        "Orion_Water_Product_Manual_2026.pdf p.1 (0.299)",
+        "Orion_Water_Product_Manual_2026.pdf p.1 (0.306)",
+        "Orion_Water_Product_Manual_2026.pdf p.2 (0.307)"
+      ]
+    },
+    {
+      "id": "nf-04",
+      "language": "he",
+      "type": "not_found",
+      "problem": "not blocked",
+      "question": "כמה ימי חופשת לידה נותנת החברה?",
+      "expected": [],
+      "got": [
+        "Orion_Employee_Policy_2026_HE.pdf p.2 (0.254)",
+        "Orion_Employee_Policy_2026_HE.pdf p.9 (0.258)",
+        "Orion_Employee_Policy_2026_HE.pdf p.3 (0.261)"
+      ]
+    },
+    {
+      "id": "dm-03",
+      "language": "he",
+      "type": "not_found",
+      "problem": "not blocked",
+      "question": "האם יש בריכה במעונות?",
+      "expected": [],
+      "got": [
+        "Kiryat_Hadar_Dorms_Rules.pdf p.1 (0.307)",
+        "Kiryat_Hadar_Dorms_Rules.pdf p.2 (0.311)",
+        "Kiryat_Hadar_Dorms_Rules.pdf p.3 (0.335)"
+      ]
+    }
+  ]
+}

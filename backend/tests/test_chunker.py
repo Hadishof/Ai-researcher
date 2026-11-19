@@ -40,6 +40,71 @@ def test_line_breaks_inside_a_paragraph_become_spaces():
     ]
 
 
+SPEC_PAGE_LINES = [
+    "6. AquaPure AP-800 - Specifications",
+    "The AP-800 is designed for offices with up to 40 employees.",
+    "Capacity 800 liters per day",
+    "Weight 38 kg (empty)",
+    "Storage tank 20 liters",
+    "Price (2026) 7,900 ILS, or leasing at 249 ILS per month",
+]
+
+
+def test_page_without_blank_lines_is_split_at_line_ends():
+    # Like real PDF text: no blank lines, a numbered heading and table rows without full stops.
+    text = "\n".join(SPEC_PAGE_LINES)
+
+    chunks = split_text(text, chunk_size=100, overlap=0)
+
+    assert len(chunks) > 1
+    for chunk in chunks:
+        assert len(chunk) <= 100
+        # Every chunk is made of whole lines: no table row is cut or glued to another.
+        assert all(line in SPEC_PAGE_LINES for line in chunk.split("\n"))
+    # No line is lost, and the order is kept.
+    assert [line for chunk in chunks for line in chunk.split("\n")] == SPEC_PAGE_LINES
+
+
+def test_numbered_heading_stays_whole():
+    # Sentence splitting alone would cut "6." off as its own "sentence".
+    chunks = split_text("\n".join(SPEC_PAGE_LINES), chunk_size=100, overlap=0)
+
+    assert chunks[0].startswith("6. AquaPure AP-800 - Specifications")
+
+
+def test_page_that_fits_is_one_chunk_with_lines_joined():
+    text = "\n".join(SPEC_PAGE_LINES)  # about 230 characters
+
+    assert split_text(text, chunk_size=1000, overlap=0) == [" ".join(SPEC_PAGE_LINES)]
+
+
+def test_line_too_long_for_a_chunk_is_split_at_sentence_ends():
+    long_line = "The unit is quiet. It fits under a sink. It needs no power. It is easy to clean."
+    text = f"Short heading\n{long_line}"
+
+    chunks = split_text(text, chunk_size=40, overlap=0)
+
+    assert all(len(chunk) <= 40 for chunk in chunks)
+    pieces = [piece for chunk in chunks for piece in chunk.split("\n")]
+    assert pieces == [
+        "Short heading",
+        "The unit is quiet.",
+        "It fits under a sink.",
+        "It needs no power.",
+        "It is easy to clean.",
+    ]
+
+
+def test_overlap_starts_at_a_whole_word_after_a_line_break():
+    chunks = split_text("\n".join(SPEC_PAGE_LINES), chunk_size=100, overlap=30)
+
+    words = {word for line in SPEC_PAGE_LINES for word in line.split()}
+    for previous, current in zip(chunks, chunks[1:]):
+        overlap = shared_start(previous, current)
+        assert overlap  # the new chunk repeats the end of the previous one
+        assert overlap.split()[0] in words  # and starts with a whole word
+
+
 def test_long_paragraph_is_split_at_sentence_ends():
     sentences = [
         "Nimbus Robotics builds robot arms.",

@@ -74,6 +74,12 @@ def test_normalize_lowercases_and_drops_thousands_separators():
     assert normalize("38,500 and 1,234,567") == "38500 and 1234567"
 
 
+def test_normalize_replaces_ligatures():
+    assert normalize("Carbon ﬁlter") == "carbon filter"  # "ﬁ" is one character
+    assert facts_present("Replace the ﬁlter.", [["filter"]])
+    assert facts_present("Replace the filter.", [["ﬁlter"]])
+
+
 def test_normalize_keeps_commas_that_are_not_thousands_separators():
     assert normalize("1,2,3") == "1,2,3"
     assert normalize("Hello, world") == "hello, world"

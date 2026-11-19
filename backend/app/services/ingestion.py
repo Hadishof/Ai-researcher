@@ -2,6 +2,7 @@
 
 import hashlib
 import re
+import unicodedata
 from io import BytesIO
 
 from google import genai
@@ -31,6 +32,9 @@ class DuplicateDocumentError(Exception):
 
 # Paragraphs are separated by one or more blank lines.
 PARAGRAPH_BREAK = re.compile(r"\n\s*\n")
+# A single line break: in a PDF, the end of a line of text (a heading, a table row,
+# a list item, or just where a long sentence wrapped).
+LINE_BREAK = re.compile(r"\n")
 # A sentence ends with . ! ? … or the Hebrew sof pasuq (׃), followed by whitespace.
 # This works for Hebrew too: Hebrew uses the same punctuation marks.
 SENTENCE_END = re.compile(r"(?<=[.!?…׃])\s+")
@@ -55,12 +59,22 @@ def clean_filename(name: str | None) -> str:
 
 
 def read_pdf_pages(data: bytes) -> list[tuple[int, str]]:
-    """Return (page_number, text) for every page, numbered from 1."""
+    """
+    Return (page_number, text) for every page, numbered from 1.
+
+    The text is NFKC-normalized: PDFs often store letter pairs as one special
+    character (a "ligature", e.g. "ﬁ" in "ﬁlter"). To the embedding model and to
+    a text search, "ﬁlter" and "filter" are different words. NFKC replaces such
+    characters with their plain letters, so "ﬁlter" becomes "filter".
+    """
     try:
         reader = PdfReader(BytesIO(data))
         if reader.is_encrypted:
             raise InvalidPdfError("This PDF is password-protected.")
-        return [(number, page.extract_text() or "") for number, page in enumerate(reader.pages, 1)]
+        return [
+            (number, unicodedata.normalize("NFKC", page.extract_text() or ""))
+            for number, page in enumerate(reader.pages, 1)
+        ]
     except PdfReadError:
         raise InvalidPdfError("This PDF is damaged or cannot be read.") from None
 
@@ -84,33 +98,52 @@ def _overlap_tail(text: str, overlap: int) -> str:
     if overlap == 0 or len(text) <= overlap:
         return ""
     tail = text[-overlap:]
-    first_space = tail.find(" ")
-    return tail[first_space + 1 :] if first_space != -1 else tail
+    # The first space or line break: the chunk's pieces are joined with line breaks.
+    first_break = WHITESPACE.search(tail)
+    return tail[first_break.end() :] if first_break else tail
+
+
+def _split_line(line: str, chunk_size: int) -> list[str]:
+    """A line too long for one chunk: split it at sentence ends, and cut a sentence only as a last resort."""
+    pieces = []
+    for sentence in SENTENCE_END.split(line):
+        if len(sentence) <= chunk_size:
+            pieces.append(sentence)
+        else:
+            pieces.extend(_hard_split(sentence, chunk_size))
+    return pieces
 
 
 def split_text(text: str, chunk_size: int, overlap: int) -> list[str]:
     """
     Split text into chunks of at most `chunk_size` characters.
 
-    Order of preference: keep whole paragraphs, then whole sentences, and only
-    cut mid-text when a single sentence is longer than `chunk_size`.
+    Order of preference: keep whole paragraphs, then whole lines, then whole
+    sentences, and only cut mid-text when a single sentence is longer than
+    `chunk_size`. Lines matter because PDF text often has no blank lines at all:
+    a heading or a table row ("Weight 38 kg") has no full stop, so splitting
+    such a page by sentences would glue rows together or cut them apart.
     Each new chunk starts with the end of the previous one (`overlap`), so an
     idea that falls on a boundary is not lost.
     """
     # 1. Break the text into pieces that each fit in one chunk.
     pieces = []
     for paragraph in PARAGRAPH_BREAK.split(text):
-        paragraph = WHITESPACE.sub(" ", paragraph).strip()  # join the PDF's line breaks
-        if not paragraph:
+        joined = WHITESPACE.sub(" ", paragraph).strip()  # join the PDF's line breaks
+        if not joined:
             continue
-        if len(paragraph) <= chunk_size:
-            pieces.append(paragraph)
+        if len(joined) <= chunk_size:
+            pieces.append(joined)
             continue
-        for sentence in SENTENCE_END.split(paragraph):
-            if len(sentence) <= chunk_size:
-                pieces.append(sentence)
+        # Too long for one chunk: keep each line whole instead.
+        for line in LINE_BREAK.split(paragraph):
+            line = WHITESPACE.sub(" ", line).strip()
+            if not line:
+                continue
+            if len(line) <= chunk_size:
+                pieces.append(line)
             else:
-                pieces.extend(_hard_split(sentence, chunk_size))
+                pieces.extend(_split_line(line, chunk_size))
 
     # 2. Pack pieces into chunks, adding overlap when a new chunk starts.
     chunks = []

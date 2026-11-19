@@ -5,6 +5,7 @@ A page is identified by (filename, page_number), e.g. ("Manual.pdf", 3).
 """
 
 import re
+import unicodedata
 
 Page = tuple[str, int]
 
@@ -64,7 +65,13 @@ def pages_found(retrieved: list[Page], expected: list[Page]) -> int:
 
 
 def normalize(text: str) -> str:
-    """Lowercase, drop thousands separators and collapse spaces, so "1,500  Liters" == "1500 liters"."""
+    """
+    Make two texts comparable: "1,500  Liters" == "1500 liters", "ﬁlter" == "filter".
+
+    NFKC replaces special characters with plain ones (the ligature "ﬁ" becomes
+    "f" + "i"), then: lowercase, drop thousands separators, collapse spaces.
+    """
+    text = unicodedata.normalize("NFKC", text)
     text = THOUSANDS_SEPARATOR.sub("", text.casefold())
     return WHITESPACE.sub(" ", text).strip()
 

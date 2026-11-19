@@ -137,6 +137,7 @@ Phase 4 has three steps, each built and checked before the next starts.
 - [x] Relative margin sweep
 - [x] Benchmark our custom chunker against LangChain's RecursiveCharacterTextSplitter at each size (LangChain is used only inside `eval/`, never in the backend)
 - [x] Results in `eval/results/` (JSON with every detail, and a markdown summary)
+- [x] Fixes found by the experiments: PDF text is NFKC-normalized (ligatures such as "ﬁ" become "fi"), and the chunker keeps whole lines (paragraph, then line, then sentence, then a cut), so headings and table rows stay intact; experiments re-run after the fixes
 
 ### Step 4c: Full run with answers
 
