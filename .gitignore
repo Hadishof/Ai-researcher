@@ -3,6 +3,11 @@
 __pycache__/
 chroma_db/
 *.pdf
+# Exception: the synthetic evaluation PDFs are shared, so runs can be reproduced
+!eval/data/*.pdf
+
+# Evaluation caches (saved Gemini embeddings and answers)
+eval/.cache/
 # Test coverage data
 .coverage
 htmlcov/

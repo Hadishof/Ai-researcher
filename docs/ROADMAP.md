@@ -113,15 +113,46 @@ Vite). Phase 3 has two steps; 3a is built and tested before 3b starts.
 **Goal:** Measure how good the system's answers really are, instead of
 guessing, using a fixed set of questions with known answers.
 
-- [ ] Create an `eval/` folder
-- [ ] Pick one or more sample PDFs that can be shared publicly
-- [ ] Write about 30 questions (Hebrew and English) with the correct answer and the page it comes from
-- [ ] Include questions where two documents disagree, to check that the answer reports both instead of mixing them
-- [ ] Script that checks retrieval accuracy: did the search find the right page?
-- [ ] Script that checks answer faithfulness: does the answer stick to the document and not make things up?
-- [ ] Save the results to a file so runs can be compared over time
-- [ ] Use the results to tune chunk size, number of retrieved chunks and the relevance limit (`MAX_DISTANCE`)
-- [ ] Benchmark our custom chunker against LangChain's RecursiveCharacterTextSplitter on the evaluation set (LangChain is used only inside `eval/`, never in the backend)
+Phase 4 has three steps, each built and checked before the next starts.
+
+### Step 4a: Dataset, dev/test split and metrics (no Gemini)
+
+- [x] Create an `eval/` folder
+- [x] Five synthetic sample PDFs that can be shared publicly, committed in `eval/data/`
+- [x] 59 questions (Hebrew and English) with the expected facts and the pages they come from, in `eval/data/dataset.jsonl`
+- [x] Question types: factual, distractor, cross-lingual, not found, follow-up, and conflict (two documents disagree, so the answer must report both instead of mixing them)
+- [x] Every row is validated when loaded (field names, types, and rules that connect fields)
+- [x] Fixed, stratified dev/test split (40 dev / 19 test, by question type and language) in `eval/data/split.json`: settings are tuned only on dev, and test is used only for the final numbers
+- [x] Metric functions: Hit@1/3/5 and MRR by (file, page), pages found for conflicts, fact matching (case-insensitive, ignoring thousands separators), breakdown by language and type
+- [x] Tests for the metrics, the dataset loader and the split
+
+### Step 4b: Retrieval experiments (embeddings only, no answers generated)
+
+- [ ] Disk cache for embeddings, so re-runs do not call Gemini again
+- [ ] Separate temporary ChromaDB for evaluation, never the real data
+- [ ] Estimated number of Gemini calls printed before a run; run only some experiments or questions
+- [ ] Chunk size 500 / 1000 / 1500 (same overlap ratio)
+- [ ] `MAX_DISTANCE` sweep: correct pages lost vs "not found" questions correctly blocked
+- [ ] Relative margin sweep
+- [ ] Benchmark our custom chunker against LangChain's RecursiveCharacterTextSplitter (LangChain is used only inside `eval/`, never in the backend)
+
+### Step 4c: Full run with answers
+
+- [ ] One full run with the best settings from the dev set, including follow-up rewriting
+- [ ] Answer correctness against the expected facts (an LLM judge for faithfulness, i.e. whether the answer adds made-up claims, is left for later)
+- [ ] "Not found" accuracy, conflict handling and follow-up handling
+- [ ] Results saved to a JSON file and a markdown summary, with every failed question listed; test set as the headline numbers
+
+### How to run the evaluation tests
+
+From the `eval/` folder, with the virtual environment active:
+
+```
+pytest
+```
+
+The split is created once with `python split.py` and then never changes
+(the script refuses to overwrite a different split).
 
 ## Phase 5: Docker + docker-compose + GitHub Actions CI
 
