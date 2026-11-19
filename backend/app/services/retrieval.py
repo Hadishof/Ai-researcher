@@ -22,7 +22,7 @@ MAX_RETRIES = 3
 RETRY_DELAY = re.compile(r"retry in ([\d.]+)s")
 
 
-def _seconds_to_wait(error: ClientError) -> float:
+def seconds_to_wait(error: ClientError) -> float:
     match = RETRY_DELAY.search(str(error))
     seconds = float(match.group(1)) + 1 if match else 30
     return min(seconds, 60)
@@ -44,7 +44,7 @@ def _embed_batch(
             if error.code != 429 or retries == MAX_RETRIES:
                 raise
             retries += 1
-            time.sleep(_seconds_to_wait(error))
+            time.sleep(seconds_to_wait(error))
 
 
 def embed_texts(

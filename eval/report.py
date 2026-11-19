@@ -132,6 +132,81 @@ def retrieval_markdown(data: dict) -> str:
     return "\n\n".join(parts) + "\n"
 
 
+# ---------- Full run ----------
+
+HEADLINE_ROWS = [
+    ("correct", "Right outcome (the facts, or \"not found\" when the answer is not there)"),
+    ("facts_correct", "Answerable questions: every expected fact in the answer"),
+    ("cited_correct_page", "Answerable questions: the correct page among the sources"),
+    ("found_ok", "Found / not found decided correctly"),
+    ("conflict_ok", "Conflicts: both values given and every conflicting page cited"),
+    ("follow_up_ok", "Follow-ups: correct after rewriting"),
+    ("hit@1", "Retrieval: correct page ranked first"),
+    ("hit@5", "Retrieval: correct page in the top 5"),
+]
+
+
+def score_cell(summary: dict) -> str:
+    """'17/19 (89%)' from {"value": 0.894, "count": 19}."""
+    value, count = summary["value"], summary["count"]
+    if value is None:
+        return "n/a"
+    return f"{round(value * count)}/{count} ({percent(value)})"
+
+
+def full_markdown(data: dict) -> str:
+    info = data["info"]
+    s = info["settings"]
+    parts = [
+        f"# Full evaluation run ({info['part']} set)",
+        f"Run: {info['date']}. Answers: `{info['generation_model']}`, embeddings: `{info['embedding_model']}`. "
+        f"Settings: chunk size {s['chunk_size']} (overlap {s['chunk_overlap']}), MAX_DISTANCE "
+        f"{s['max_distance']}, relative margin {s['relative_margin']}, top {s['top_k']} chunks.",
+        "The settings were chosen with the retrieval experiments on the dev set only. "
+        "**The test set was never used for tuning**, so the test numbers show how the "
+        "system does on questions it was not tuned for. All checks are exact text and page "
+        "matching (no LLM judge).",
+    ]
+    for part, summary in data["summary"].items():
+        parts += [
+            f"## Results: {part} set",
+            table(["Metric", "Score"], [[label, score_cell(summary[m]["overall"])] for m, label in HEADLINE_ROWS]),
+            f"MRR: {summary['mrr']['overall']['value']:.3f}",
+            f"### By language and question type ({part} set)",
+            table(
+                ["Group", "Right outcome", "Found / not found right", "Hit@1"],
+                [[f"{label}: {name}", score_cell(summary["correct"][key][name]),
+                  score_cell(summary["found_ok"][key][name]), score_cell(summary["hit@1"][key][name])]
+                 for key, label in (("by_language", "language"), ("by_type", "type"))
+                 for name in summary["correct"][key]],
+            ),
+        ]
+    parts += ["## Failed questions", failures_markdown(data["failures"])]
+    return "\n\n".join(parts) + "\n"
+
+
+def failures_markdown(failures: list[dict]) -> str:
+    if not failures:
+        return "None."
+    blocks = []
+    for f in failures:
+        lines = [
+            f"### {f['id']} ({f['part']} set, {f['language']}, {f['type']}): {'; '.join(f['problems'])}",
+            f"- **Question:** {f['question']}",
+        ]
+        if f["search_question"] != f["question"]:
+            lines.append(f"- **Rewritten for search:** {f['search_question']}")
+        lines += [
+            f"- **Expected:** {'; '.join(f['expected_facts'])}"
+            + (f" (pages: {', '.join(f['expected_pages'])})" if f["expected_pages"] else ""),
+            f"- **Got:** {f['answer']}",
+            f"- **Sources:** {', '.join(f['sources']) or '-'}",
+            f"- **Sent to Gemini:** {', '.join(f['sent_to_gemini']) or 'nothing (blocked by the filters)'}",
+        ]
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks)
+
+
 def misses_markdown(misses: list[dict]) -> str:
     if not misses:
         return "None."
