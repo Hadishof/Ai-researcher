@@ -10,7 +10,7 @@ from google.genai.errors import APIError
 from app.core.config import Settings, get_settings
 from app.core.gemini import get_gemini_client
 from app.db.conversation_store import ConversationStore, get_conversation_store
-from app.db.vector_store import VectorStore, get_vector_store
+from app.db.vector_store import SearchResult, VectorStore, get_vector_store
 from app.schemas.chat import ChatRequest, ChatResponse, Source
 from app.services.generation import generate_answer, is_not_found_answer, not_found_message
 from app.services.retrieval import find_relevant_chunks
@@ -49,12 +49,29 @@ def answer_question(
     `question` is what the user typed; `search_question` is the standalone version
     (the same text for a first message, a rewritten one for a follow-up).
     """
+    # Find the chunks of the selected documents that are close enough in meaning.
+    chunks = find_relevant_chunks(search_question, document_ids, store, client, settings)
+    return answer_from_chunks(question, search_question, chunks, client, settings)
+
+
+def answer_from_chunks(
+    question: str,
+    search_question: str,
+    chunks: list[SearchResult],
+    client: genai.Client,
+    settings: Settings,
+) -> ChatResponse:
+    """
+    Turn the chunks found by the search into the final response.
+
+    A separate function so the evaluation runs exactly the same steps as the app
+    on its own search results.
+    """
     not_found = ChatResponse(answer=not_found_message(question), found=False, sources=[])
 
-    # 1. Find the chunks of the selected documents that are close enough in meaning.
-    chunks = find_relevant_chunks(search_question, document_ids, store, client, settings)
+    # 1. No chunk close enough: answer honestly, without calling the LLM.
     if not chunks:
-        return not_found  # nothing relevant: answer honestly, without calling the LLM
+        return not_found
 
     # 2. Ask Gemini to answer using only those chunks.
     result = generate_answer(

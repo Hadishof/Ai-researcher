@@ -128,13 +128,15 @@ Phase 4 has three steps, each built and checked before the next starts.
 
 ### Step 4b: Retrieval experiments (embeddings only, no answers generated)
 
-- [ ] Disk cache for embeddings, so re-runs do not call Gemini again
-- [ ] Separate temporary ChromaDB for evaluation, never the real data
-- [ ] Estimated number of Gemini calls printed before a run; run only some experiments or questions
-- [ ] Chunk size 500 / 1000 / 1500 (same overlap ratio)
-- [ ] `MAX_DISTANCE` sweep: correct pages lost vs "not found" questions correctly blocked
-- [ ] Relative margin sweep
-- [ ] Benchmark our custom chunker against LangChain's RecursiveCharacterTextSplitter (LangChain is used only inside `eval/`, never in the backend)
+- [x] The relevance filters (`filter_results`) and the answer step (`answer_from_chunks`) are separate backend functions, so the evaluation runs the app's own code
+- [x] Disk cache for embeddings, so re-runs do not call Gemini again
+- [x] Separate temporary ChromaDB for evaluation, never the real data
+- [x] Exact number of Gemini calls printed before a run (`--dry-run`); run only some experiments or questions; pause between requests
+- [x] Chunk size 500 / 1000 / 1500 (same overlap ratio)
+- [x] `MAX_DISTANCE` sweep: correct pages lost vs "not found" questions correctly blocked
+- [x] Relative margin sweep
+- [x] Benchmark our custom chunker against LangChain's RecursiveCharacterTextSplitter at each size (LangChain is used only inside `eval/`, never in the backend)
+- [x] Results in `eval/results/` (JSON with every detail, and a markdown summary)
 
 ### Step 4c: Full run with answers
 
@@ -143,13 +145,20 @@ Phase 4 has three steps, each built and checked before the next starts.
 - [ ] "Not found" accuracy, conflict handling and follow-up handling
 - [ ] Results saved to a JSON file and a markdown summary, with every failed question listed; test set as the headline numbers
 
-### How to run the evaluation tests
+### How to run the evaluation
 
 From the `eval/` folder, with the virtual environment active:
 
 ```
-pytest
+pip install -r requirements-eval.txt
+pytest                                          # metric tests, no API key needed
+python run_eval.py retrieval --dry-run          # how many Gemini calls a run needs
+python run_eval.py retrieval --pace 60          # retrieval experiments on the dev set
 ```
+
+Embeddings are cached in `eval/.cache/`, so running the experiments again
+costs no Gemini calls. `--experiments`, `--chunk-sizes`, `--ids` and `--limit`
+run only part of the experiments or questions.
 
 The split is created once with `python split.py` and then never changes
 (the script refuses to overwrite a different split).

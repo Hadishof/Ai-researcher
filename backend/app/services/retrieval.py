@@ -79,21 +79,34 @@ def find_relevant_chunks(
 
     Only chunks of the documents in `document_ids` are searched (the documents
     selected for the conversation), so information from other documents never mixes in.
-
-    A chunk is kept only if it passes both filters:
-    - absolute: its distance is at most MAX_DISTANCE
-    - relative: its distance is at most the best chunk's distance + RELATIVE_MARGIN
     """
     query_embedding = embed_texts(
         client, [question], model=settings.embedding_model, task_type="RETRIEVAL_QUERY"
     )[0]
     results = store.search(query_embedding, top_k=settings.top_k, document_ids=document_ids)
+    return filter_results(results, settings.max_distance, settings.relative_margin)
+
+
+def filter_results(
+    results: list[SearchResult], max_distance: float, relative_margin: float
+) -> list[SearchResult]:
+    """
+    Keep only the search results that are close enough to the question.
+
+    `results` must be sorted closest first (as Chroma returns them).
+    A chunk is kept only if it passes both filters:
+    - absolute: its distance is at most `max_distance`
+    - relative: its distance is at most the best chunk's distance + `relative_margin`
+
+    This is a separate function so the evaluation can try many limits on the
+    same search results, without searching (or calling Gemini) again.
+    """
     if not results:
         return []
 
     # Chroma returns results closest first, so the first one is the best match.
-    relative_limit = results[0].distance + settings.relative_margin
-    limit = min(settings.max_distance, relative_limit)
+    relative_limit = results[0].distance + relative_margin
+    limit = min(max_distance, relative_limit)
 
     kept = []
     for result in results:
@@ -109,9 +122,9 @@ def find_relevant_chunks(
             kept.append(result)
     logger.debug(
         "Limits: max_distance=%.3f, relative=%.3f (best %.3f + margin %.3f)",
-        settings.max_distance,
+        max_distance,
         relative_limit,
         results[0].distance,
-        settings.relative_margin,
+        relative_margin,
     )
     return kept
