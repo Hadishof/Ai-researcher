@@ -5,6 +5,8 @@
 
 Ask questions about your PDF documents in Hebrew or English, and get answers with page citations that open the source PDF at the cited page.
 
+**At a glance:** Bilingual RAG (Hebrew/English) · FastAPI + React/TypeScript · 97% retrieval Hit@1 on the dev set · 218 automated tests in CI
+
 <!-- demo.gif and screenshots go here -->
 
 ## Features
@@ -85,8 +87,8 @@ The goal was to measure the system instead of guessing. The evaluation code is i
 
 ### Method
 
-- **Dataset:** 59 hand-written questions (41 English, 18 Hebrew) about 5 synthetic PDFs (3 English, 2 Hebrew, 39 pages), committed so anyone can reproduce the runs. Each question lists the pages and facts its answer must contain.
-- **Question types:** factual (30), distractor (11: the documents also contain a similar but different fact, such as the same detail for another product model, to test that the right one is chosen), not found (7), cross-lingual (6: English question, Hebrew document), conflict (3: two documents disagree), follow-up (2).
+- **Dataset:** 59 questions with manually verified answers (41 English, 18 Hebrew) about 5 synthetic PDFs (3 English, 2 Hebrew, 39 pages), committed so anyone can reproduce the runs. Each question lists the pages and facts its answer must contain.
+- **Question types:** factual (30), distractor (11: the documents also contain a similar but different fact, such as the same detail for another product model, to test that the right one is chosen), not found (7), cross-lingual (6: a question in one language about a document in the other), conflict (3: two documents disagree), follow-up (2).
 - **Dev/test split:** a stratified split by type and language with a fixed random seed: 40 dev questions, 19 test questions ([`split.json`](eval/data/split.json)). All tuning used only the dev set; **the test set was never used for tuning.**
 - **Selection rules fixed before the runs:** chunk size = highest MRR; distance threshold = most correct pages kept plus "not found" questions blocked; margin = the smallest that loses no correct page.
 - **Deterministic checks only:** page matching and expected-fact matching (case-insensitive, ignoring thousands separators). No LLM judge.
@@ -117,7 +119,7 @@ The first run showed our chunker losing to LangChain at size 500. Looking at the
 
 After the fixes, our chunker at size 500 went from Hit@1 86% to 97% and MRR from 0.907 to 0.981 (reports [before](eval/results/2026-11-19_223431_retrieval.md) and [after](eval/results/2026-11-19_225052_retrieval.md)).
 
-### Honest findings
+### Findings and limitations of the evaluation
 
 - **A distance threshold cannot recognize "not found" questions.** The not-found questions are about the documents' own topics (for example a product the manual does not list), so their closest chunks are as close as real answers. At any threshold that keeps every correct page, only 1 of the 5 dev not-found questions is blocked; blocking 2 would lose 5 correct pages. The real protection is the instruction to answer only from the excerpts and to say "not found" otherwise.
 - **The threshold is fragile.** 0.34 instead of 0.38 was decided by a single dev question.
