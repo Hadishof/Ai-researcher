@@ -1,6 +1,6 @@
 # AI Researcher
 
-[![CI](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml/badge.svg?branch=v2)](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml?query=branch%3Av2)
+[![CI](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml?query=branch%3Amain)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Ask questions about your PDF documents in Hebrew or English, and get answers with page citations that open the source PDF at the cited page.
