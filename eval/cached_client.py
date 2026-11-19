@@ -14,9 +14,7 @@ settings and the full prompt (which includes the question and every excerpt).
 Change any of them, for example the chunk size, and the key changes too.
 """
 
-import json
 import time
-from pathlib import Path
 from types import SimpleNamespace
 
 from google import genai
@@ -24,8 +22,8 @@ from google.genai import types
 from google.genai.errors import APIError
 from pydantic import ValidationError
 
-from app.services.retrieval import MAX_RETRIES, seconds_to_wait
-from cache import CACHE_DIR, cache_key
+from app.core.gemini import MAX_RETRIES, seconds_to_wait
+from cache import GenerationCache, cache_key
 
 SERVER_ERROR_WAIT = 30  # seconds to wait after a 5xx error (Gemini overloaded)
 
@@ -54,24 +52,6 @@ def generation_key(model: str, contents: str, config: types.GenerateContentConfi
         contents,
     )
 
-
-class GenerationCache:
-    def __init__(self, folder: Path = CACHE_DIR / "generations"):
-        self.folder = folder
-
-    def _path(self, key: str) -> Path:
-        return self.folder / f"{key}.json"
-
-    def has(self, key: str) -> bool:
-        return self._path(key).exists()
-
-    def get(self, key: str) -> str | None:
-        path = self._path(key)
-        return json.loads(path.read_text(encoding="utf-8"))["text"] if path.exists() else None
-
-    def put(self, key: str, text: str) -> None:
-        self.folder.mkdir(parents=True, exist_ok=True)
-        self._path(key).write_text(json.dumps({"text": text}, ensure_ascii=False), encoding="utf-8")
 
 
 def make_response(text: str, config: types.GenerateContentConfig) -> SimpleNamespace:

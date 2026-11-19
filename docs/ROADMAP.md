@@ -16,7 +16,7 @@ easy to read, test and explain, and fix the problems in the current version.
 - [x] Replace the deprecated `google-generativeai` SDK with `google-genai`
 - [x] Remove LangChain: call ChromaDB, Gemini and `pypdf` directly
 - [x] Gemini embeddings for both storing and searching; ChromaDB never creates its own
-- [x] Custom chunker: paragraphs first, then sentences, cut mid-text only as a last resort, with overlap (works with Hebrew)
+- [x] Custom chunker: paragraphs first, then lines, then sentences, cut mid-text only as a last resort, with overlap (works with Hebrew). The line level was added in Phase 4, after the evaluation showed it was needed
 - [x] ChromaDB collection uses cosine distance
 - [x] Page-number citations with every answer
 - [x] "I couldn't find this in the documents" when no chunk is relevant enough
@@ -26,7 +26,7 @@ easy to read, test and explain, and fix the problems in the current version.
 - [x] Pydantic models for every request and response
 - [x] Wait and retry when Gemini's free-tier rate limit is reached
 - [x] CORS allows only the frontend address from settings
-- [x] Routes: `POST /documents`, `GET /documents`, `DELETE /documents/{id}`, `POST /chat`, `GET /health`
+- [x] Routes: `POST /documents`, `GET /documents`, `DELETE /documents/{id}`, `POST /chat`, `GET /health` (`GET /documents/{id}/file` was added later, see "Extra features")
 - [x] `requirements.txt` trimmed to the packages actually used
 - [x] `.env.example` showing which settings are needed
 - [x] Remove `app.py` (Streamlit), to be replaced in Phase 3
@@ -128,7 +128,7 @@ Phase 4 has three steps, each built and checked before the next starts.
 
 ### Step 4b: Retrieval experiments (embeddings only, no answers generated)
 
-- [x] The relevance filters (`filter_results`) and the answer step (`answer_from_chunks`) are separate backend functions, so the evaluation runs the app's own code
+- [x] The relevance filters (`filter_results`, in `app/services/retrieval.py`) and the answer step (`answer_from_chunks`, in `app/services/answering.py`) are separate backend functions, so the evaluation runs the app's own code
 - [x] Disk cache for embeddings, so re-runs do not call Gemini again
 - [x] Separate temporary ChromaDB for evaluation, never the real data
 - [x] Exact number of Gemini calls printed before a run (`--dry-run`); run only some experiments or questions; pause between requests
@@ -138,9 +138,15 @@ Phase 4 has three steps, each built and checked before the next starts.
 - [x] Benchmark our custom chunker against LangChain's RecursiveCharacterTextSplitter at each size (LangChain is used only inside `eval/`, never in the backend)
 - [x] Results in `eval/results/` (JSON with every detail, and a markdown summary)
 - [x] Fixes found by the experiments: PDF text is NFKC-normalized (ligatures such as "ﬁ" become "fi"), and the chunker keeps whole lines (paragraph, then line, then sentence, then a cut), so headings and table rows stay intact; experiments re-run after the fixes
+- [x] The backend defaults now use the settings chosen on the dev set: chunk size 500 (overlap 75), `MAX_DISTANCE` 0.34, `RELATIVE_MARGIN` 0.10
+
+The two retrieval reports in `eval/results/` are the same experiments before
+(`2026-11-19_223431_retrieval`) and after (`2026-11-19_225052_retrieval`) the
+ligature and line-level fixes. The second one chose the settings above.
 
 ### Step 4c: Full run with answers
 
+- [x] `full` mode: the whole app pipeline (rewrite, search, filters, answer) on each question, with answers cached on disk, pauses between requests, retries, and an immediate stop with a clear message when the free tier's daily limit is reached (the same command resumes from the cache)
 - [ ] One full run with the best settings from the dev set, including follow-up rewriting
 - [ ] Answer correctness against the expected facts (an LLM judge for faithfulness, i.e. whether the answer adds made-up claims, is left for later)
 - [ ] "Not found" accuracy, conflict handling and follow-up handling
@@ -155,14 +161,32 @@ pip install -r requirements-eval.txt
 pytest                                          # metric tests, no API key needed
 python run_eval.py retrieval --dry-run          # how many Gemini calls a run needs
 python run_eval.py retrieval --pace 60          # retrieval experiments on the dev set
+
+# The full run with answers, on the test set (the headline numbers):
+python run_eval.py full --part test --chunk-size 500 --max-distance 0.34 --margin 0.10 --dry-run
+python run_eval.py full --part test --chunk-size 500 --max-distance 0.34 --margin 0.10 --pace-generate 20
 ```
 
-Embeddings are cached in `eval/.cache/`, so running the experiments again
-costs no Gemini calls. `--experiments`, `--chunk-sizes`, `--ids` and `--limit`
-run only part of the experiments or questions.
+Embeddings and answers are cached in `eval/.cache/`, so running again costs no
+Gemini calls, and a run that stopped continues where it stopped.
+`--experiments`, `--chunk-sizes`, `--ids` and `--limit` run only part of the
+experiments or questions; `--part dev` or `--part all` runs the full run on
+the dev set or on every question.
 
 The split is created once with `python split.py` and then never changes
 (the script refuses to overwrite a different split).
+
+## Extra features: viewing PDFs and a flexible sidebar
+
+Added after Phase 4, so answers can be checked against the source in one click.
+
+- [x] Uploaded PDFs are saved as `backend/data/files/<document_id>.pdf` (folder in settings, ignored by git); the path is built only from the checked SHA-256 id, never from the uploaded filename
+- [x] `GET /documents/{id}/file` returns the PDF to show in the browser (404 if the document or its file is missing, 422 for a malformed id); deleting a document also deletes its file
+- [x] Uploading a document again stores its file if it was uploaded before files were kept
+- [x] A "view" button on each library document opens its PDF in a new tab
+- [x] Clickable citations: each source chip opens the PDF at the cited page (`#page=N`); chips of deleted documents stay plain text
+- [x] The sidebar can be resized (drag its edge, or the arrow keys on the handle) and collapsed; width and collapsed state are remembered; narrow screens keep the drawer
+- [x] Tests for storing, serving and deleting files (including path traversal), the links, and the sidebar
 
 ## Phase 5: Docker + docker-compose + GitHub Actions CI
 

@@ -1,7 +1,6 @@
 """Turns text into Gemini embeddings and finds the chunks most relevant to a question."""
 
 import logging
-import re
 import time
 
 from google import genai
@@ -9,23 +8,13 @@ from google.genai import types
 from google.genai.errors import ClientError
 
 from app.core.config import Settings
+from app.core.gemini import MAX_RETRIES, seconds_to_wait
 from app.db.vector_store import SearchResult, VectorStore
 
 logger = logging.getLogger(__name__)
 
 # Gemini accepts at most 100 texts per embedding request.
 EMBED_BATCH_SIZE = 100
-
-# The free tier allows a limited number of embeddings per minute. When we hit the
-# limit, Gemini answers "429" and says how many seconds to wait. We wait and retry.
-MAX_RETRIES = 3
-RETRY_DELAY = re.compile(r"retry in ([\d.]+)s")
-
-
-def seconds_to_wait(error: ClientError) -> float:
-    match = RETRY_DELAY.search(str(error))
-    seconds = float(match.group(1)) + 1 if match else 30
-    return min(seconds, 60)
 
 
 def _embed_batch(

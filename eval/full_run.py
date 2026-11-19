@@ -4,7 +4,7 @@ The full run: every question goes through the whole app pipeline, answer include
 For each question, exactly like POST /chat in a chat that selected its documents:
 1. follow-up?  rewrite it into a standalone question (rewrite_question)
 2. search its documents and apply the relevance filters (filter_results)
-3. answer from the chunks that are left (answer_from_chunks)
+3. answer from the chunks that are left (answer_from_chunks, in app/services/answering.py)
 Then the answer is checked against the expected facts and pages.
 """
 
@@ -17,7 +17,8 @@ from app.db.conversation_store import Message
 from app.db.vector_store import SearchResult
 from app.schemas.chat import ChatResponse
 from app.services.rewriting import REWRITE_INSTRUCTION, build_rewrite_prompt
-from cached_client import GenerationCache, generation_key
+from cache import GenerationCache
+from cached_client import generation_key
 from dataset import Question
 from metrics import facts_present, hit_at_k, missing_facts, pages_found, reciprocal_rank
 

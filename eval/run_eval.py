@@ -20,8 +20,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 
 from app.core.config import get_settings  # noqa: E402
-from cache import EmbeddingCache  # noqa: E402
-from cached_client import CachedGeminiClient, DailyLimitReached, GenerationCache  # noqa: E402
+from app.core.gemini import get_gemini_client  # noqa: E402
+from app.services.answering import answer_from_chunks  # noqa: E402
+from app.services.retrieval import filter_results  # noqa: E402
+from app.services.rewriting import rewrite_question  # noqa: E402
+from cache import EmbeddingCache, GenerationCache  # noqa: E402
+from cached_client import CachedGeminiClient, DailyLimitReached  # noqa: E402
 from chunkers import OVERLAP_RATIO, Setup, load_pdfs, make_chunks  # noqa: E402
 from dataset import Question, load_dataset  # noqa: E402
 from embedder import DOCUMENT, QUERY, PacedEmbedder  # noqa: E402
@@ -108,8 +112,6 @@ def run_retrieval(args: argparse.Namespace) -> None:
 
     # 2. Fetch only the missing embeddings (paced, saved as they arrive).
     if embedder.count_requests(missing):
-        from app.core.gemini import get_gemini_client
-
         embedder.fetch(get_gemini_client(), missing)
 
     # 3. Index each setup in a temporary ChromaDB and search every question.
@@ -181,10 +183,6 @@ def daily_limit_message(done: int, total: int) -> str:
 
 
 def run_full(args: argparse.Namespace) -> None:
-    from app.api.routes.chat import answer_from_chunks
-    from app.services.retrieval import filter_results
-    from app.services.rewriting import rewrite_question
-
     # The settings under test, passed as flags. The app's own defaults are not changed.
     settings = get_settings().model_copy(
         update={
@@ -227,9 +225,7 @@ def run_full(args: argparse.Namespace) -> None:
     if args.dry_run:
         return
 
-    from app.core.gemini import get_gemini_client
-
-    gemini = get_gemini_client()
+    gemini = get_gemini_client()  # created only now: a dry run needs no client
     client = CachedGeminiClient(gemini, generations, args.pace_generate)
 
     # 1. Follow-ups: rewrite into a standalone question first, like POST /chat.

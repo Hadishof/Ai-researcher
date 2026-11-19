@@ -9,7 +9,8 @@ from google.genai.errors import ClientError
 import cached_client
 from app.schemas.chat import ChatResponse, Source
 from app.services.generation import GeminiAnswer
-from cached_client import CachedGeminiClient, DailyLimitReached, GenerationCache, is_daily_limit
+from cache import GenerationCache
+from cached_client import CachedGeminiClient, DailyLimitReached, is_daily_limit
 from dataset import Question
 from full_run import Outcome, failure, score
 from run_eval import daily_limit_message
