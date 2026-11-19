@@ -3,6 +3,8 @@
 [![CI](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml?query=branch%3Amain)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+![Python 3.12](https://img.shields.io/badge/Python%203.12-555?style=flat&logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-555?style=flat&logo=fastapi&logoColor=white) ![React](https://img.shields.io/badge/React-555?style=flat&logo=react&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-555?style=flat&logo=typescript&logoColor=white) ![ChromaDB](https://img.shields.io/badge/ChromaDB-555?style=flat) ![SQLite](https://img.shields.io/badge/SQLite-555?style=flat&logo=sqlite&logoColor=white) ![Gemini API](https://img.shields.io/badge/Gemini%20API-555?style=flat&logo=googlegemini&logoColor=white)
+
 Ask questions about your PDF documents in Hebrew or English, and get answers with page citations that open the source PDF at the cited page.
 
 **At a glance:** Bilingual RAG (Hebrew/English) · FastAPI + React/TypeScript · 97% retrieval Hit@1 on the dev set · 218 automated tests in CI
