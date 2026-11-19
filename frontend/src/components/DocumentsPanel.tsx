@@ -1,7 +1,7 @@
 // The document library: upload a PDF (it is added to the open chat), see every document,
-// and delete one, with a warning when chats use it.
+// open its PDF in a new tab, and delete one, with a warning when chats use it.
 
-import { Trash2, Upload } from "lucide-react";
+import { ExternalLink, Trash2, Upload } from "lucide-react";
 import { useState } from "react";
 import type { ChangeEvent, RefObject } from "react";
 
@@ -130,6 +130,20 @@ export default function DocumentsPanel({
                 </span>
               </div>
               <div className="row-actions">
+                {document.has_file && (
+                  // A real link, not a button: it opens a new tab, and the browser's
+                  // "open in new tab" and middle-click work too. Same look as the icon buttons.
+                  <a
+                    className="btn btn-ghost btn-sm btn-icon"
+                    href={api.fileUrl(document.document_id)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`View ${document.filename}`}
+                    title="Open the PDF in a new tab"
+                  >
+                    <ExternalLink size={14} aria-hidden />
+                  </a>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"

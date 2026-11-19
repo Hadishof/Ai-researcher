@@ -7,14 +7,14 @@ import { describe, expect, it } from "vitest";
 import App from "../App";
 import { ApiError } from "../api/client";
 import type { MessageResponse } from "../api/types";
-import { HANDBOOK, conversation, mockApi, summary } from "./fakeBackend";
+import { HANDBOOK, POLICY, conversation, mockApi, summary } from "./fakeBackend";
 
-/** Render the app and open chat 1, which has the handbook selected. */
+/** Render the app and open chat 1, which has the handbook and the policy selected. */
 async function openChat(messages: MessageResponse[] = []) {
   const backend = mockApi({
     conversations: [summary(1, "Company facts")],
-    documents: [HANDBOOK],
-    opened: conversation(1, "Company facts", [HANDBOOK], messages),
+    documents: [HANDBOOK, POLICY],
+    opened: conversation(1, "Company facts", [HANDBOOK, POLICY], messages),
   });
   const user = userEvent.setup();
   render(<App />);
@@ -46,11 +46,53 @@ describe("ChatView", () => {
     expect(await screen.findByText("Nimbus Robotics was founded by Dana Levi.")).toBeInTheDocument();
     expect(screen.getByText("Who founded it?")).toBeInTheDocument(); // the question stays on screen
     const sources = screen.getByRole("list", { name: "Sources" });
-    const chip = within(sources).getByRole("listitem");
+    // The handbook's PDF is stored, so its chip is a link to the cited page.
+    const chip = within(sources).getByRole("link");
     expect(chip).toHaveTextContent(/^handbook · p\. 3$/); // no ".pdf", no score, one space
-    expect(chip).toHaveAttribute("title", "Relevance: 0.76"); // the score is in the tooltip
-    expect(chip).toHaveAccessibleName("handbook, page 3, relevance 0.76");
+    expect(chip).toHaveAttribute("title", "Relevance: 0.76. Opens page 3 in a new tab.");
+    expect(chip).toHaveAccessibleName("Open handbook, page 3, relevance 0.76");
     expect(screen.getByRole("textbox", { name: "Question" })).toHaveValue(""); // box is cleared
+  });
+
+  it("links a source chip to its PDF at the cited page, in a new tab", async () => {
+    await openChat([
+      { id: 1, role: "user", content: "Who founded it?", found: null, sources: [], created_at: "" },
+      {
+        id: 2,
+        role: "assistant",
+        content: "Dana Levi founded it.",
+        found: true,
+        sources: [
+          { document_id: HANDBOOK.document_id, filename: "handbook.pdf", page: 6, score: 0.81, document_deleted: false },
+        ],
+        created_at: "",
+      },
+    ]);
+
+    const link = screen.getByRole("link", { name: "Open handbook, page 6, relevance 0.81" });
+    expect(link).toHaveAttribute("href", `http://localhost:8000/documents/${HANDBOOK.document_id}/file#page=6`);
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer"); // the new tab can't control this one
+  });
+
+  it("does not link a chip whose document has no stored PDF", async () => {
+    await openChat([
+      { id: 1, role: "user", content: "Is there a policy?", found: null, sources: [], created_at: "" },
+      {
+        id: 2,
+        role: "assistant",
+        content: "Yes.",
+        found: true,
+        sources: [
+          { document_id: POLICY.document_id, filename: "policy-2024.pdf", page: 2, score: 0.7, document_deleted: false },
+        ],
+        created_at: "",
+      },
+    ]);
+
+    const sources = screen.getByRole("list", { name: "Sources" });
+    expect(within(sources).queryByRole("link")).not.toBeInTheDocument();
+    expect(within(sources).getByLabelText("policy-2024, page 2, relevance 0.70")).toBeInTheDocument();
   });
 
   it("adds a new line with Shift+Enter instead of sending", async () => {
@@ -143,7 +185,10 @@ describe("ChatView", () => {
     ]);
 
     expect(screen.getByText("Dana Levi founded it.")).toBeInTheDocument();
-    const chip = within(screen.getByRole("list", { name: "Sources" })).getByRole("listitem");
+    const sources = screen.getByRole("list", { name: "Sources" });
+    // A deleted document's chip is not a link: there is no PDF to open any more.
+    expect(within(sources).queryByRole("link")).not.toBeInTheDocument();
+    const chip = within(sources).getByLabelText("old-handbook, page 1, deleted from the library");
     expect(chip).toHaveClass("chip-deleted");
     expect(chip).toHaveTextContent(/^old-handbook · p\. 1 · deleted$/);
     expect(chip).toHaveAttribute("title", "Deleted from the library");

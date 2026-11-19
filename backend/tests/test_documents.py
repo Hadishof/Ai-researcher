@@ -39,6 +39,7 @@ def test_upload_pdf(upload, make_pdf, fake_gemini):
         "pages": 4,
         "chunks": 4,  # each short page fits in one chunk
         "conversation_count": 0,  # a new document is not in any conversation yet
+        "has_file": True,  # the original PDF is stored and can be viewed
     }
     # All chunks were embedded in one request, including the Hebrew page's text.
     assert len(fake_gemini.models.embed_calls) == 1

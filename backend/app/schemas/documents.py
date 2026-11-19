@@ -11,6 +11,9 @@ class DocumentResponse(BaseModel):
     # How many conversations have this document selected.
     # A newly uploaded document is not in any conversation yet, so it starts at 0.
     conversation_count: int = 0
+    # True if the original PDF is stored and can be viewed (GET /documents/{id}/file).
+    # Documents uploaded before files were stored have no file.
+    has_file: bool = False
 
 
 class DocumentListResponse(BaseModel):

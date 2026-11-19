@@ -2,6 +2,8 @@
 // and passes data and actions down to the sidebar and the chat area as props.
 
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import { flushSync } from "react-dom";
 
 import { ApiError, api } from "./api/client";
 import type {
@@ -15,12 +17,20 @@ import ChatView from "./components/ChatView";
 import type { OpenChat } from "./components/ChatView";
 import DocumentsPanel from "./components/DocumentsPanel";
 import Sidebar from "./components/Sidebar";
+import { useSidebarLayout } from "./hooks/useSidebarLayout";
 import { useTheme } from "./hooks/useTheme";
 
 const NEW_CHAT: OpenChat = { id: null, title: null, documents: [], messages: [] };
 
+// Below this width the sidebar is a drawer (the same breakpoint as in app.css).
+const NARROW_SCREEN = "(max-width: 767px)";
+
 function errorText(err: unknown): string {
   return err instanceof ApiError ? err.message : "Something went wrong. Please try again.";
+}
+
+function isNarrowScreen(): boolean {
+  return window.matchMedia?.(NARROW_SCREEN).matches ?? false;
 }
 
 export default function App() {
@@ -30,9 +40,12 @@ export default function App() {
   const [chat, setChat] = useState<OpenChat>(NEW_CHAT);
   const [chatLoading, setChatLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // narrow screens: the drawer
+  const sidebar = useSidebarLayout(); // wide screens: width and collapsed
 
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const collapseButtonRef = useRef<HTMLButtonElement>(null);
+  const openSidebarButtonRef = useRef<HTMLButtonElement>(null);
   // Which chat the user asked for last. If they click quickly between chats, an older,
   // slower response must not replace the chat they opened most recently.
   const requestedChatId = useRef<number | null>(null);
@@ -65,6 +78,25 @@ export default function App() {
   useEffect(() => {
     loadAll();
   }, []);
+
+  // --- Sidebar ---
+
+  // The button that was clicked disappears, so move the keyboard focus to the button that
+  // undoes it; otherwise focus would fall back to the top of the page. flushSync applies
+  // the change right away, so the other button is already on screen when it is focused.
+  function collapseSidebar() {
+    flushSync(() => sidebar.setCollapsed(true));
+    openSidebarButtonRef.current?.focus();
+  }
+
+  function openSidebar() {
+    if (isNarrowScreen()) {
+      setSidebarOpen(true); // the drawer
+      return;
+    }
+    flushSync(() => sidebar.setCollapsed(false));
+    collapseButtonRef.current?.focus();
+  }
 
   // --- Chats ---
 
@@ -217,10 +249,18 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div
+      className={`app ${sidebar.collapsed ? "sidebar-collapsed" : ""}`}
+      // The chosen width, used by the grid on wide screens (the drawer keeps its own width).
+      style={{ "--sidebar-chosen-width": `${sidebar.width}px` } as CSSProperties}
+    >
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        width={sidebar.width}
+        onResize={sidebar.setWidth}
+        onCollapse={collapseSidebar}
+        collapseButtonRef={collapseButtonRef}
         theme={theme}
         onToggleTheme={toggleTheme}
         conversations={conversations}
@@ -260,9 +300,12 @@ export default function App() {
           onChangeDocuments={changeChatDocuments}
           onUploadClick={() => {
             setSidebarOpen(true); // on narrow screens, show the library being used
+            if (sidebar.collapsed && !isNarrowScreen()) sidebar.setCollapsed(false); // and on wide ones
             uploadInputRef.current?.click();
           }}
-          onOpenSidebar={() => setSidebarOpen(true)}
+          onOpenSidebar={openSidebar}
+          sidebarCollapsed={sidebar.collapsed}
+          openSidebarButtonRef={openSidebarButtonRef}
         />
       </div>
     </div>

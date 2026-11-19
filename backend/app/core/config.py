@@ -31,6 +31,8 @@ class Settings(BaseSettings):
 
     # Saved conversations (SQLite). The folder is created automatically.
     database_path: Path = BACKEND_DIR / "data" / "conversations.db"
+    # The original uploaded PDFs, saved as <document_id>.pdf so they can be viewed.
+    files_path: Path = BACKEND_DIR / "data" / "files"
     # How many earlier messages are sent to Gemini when rewriting a follow-up question
     # into a standalone one. 0 turns the rewrite off.
     history_messages: int = Field(default=6, ge=0)

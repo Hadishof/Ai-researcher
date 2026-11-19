@@ -10,6 +10,19 @@ import { HANDBOOK, POLICY, conversation, mockApi, summary } from "./fakeBackend"
 
 const PDF = new File(["%PDF-1.7 fake"], "policy-2024.pdf", { type: "application/pdf" });
 
+describe("Viewing a PDF", () => {
+  it("shows a view link, opening in a new tab, only for documents with a stored PDF", async () => {
+    mockApi({ documents: [HANDBOOK, POLICY] }); // POLICY has no stored file
+    render(<App />);
+
+    const link = await screen.findByRole("link", { name: "View handbook.pdf" });
+    expect(link).toHaveAttribute("href", `http://localhost:8000/documents/${HANDBOOK.document_id}/file`);
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(screen.queryByRole("link", { name: "View policy-2024.pdf" })).not.toBeInTheDocument();
+  });
+});
+
 /** Render the app with chat 1 open (no documents selected yet). */
 async function openChat(documents = [HANDBOOK]) {
   const backend = mockApi({

@@ -76,8 +76,25 @@ textarea {
 
 .app {
   display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  /* The width chosen by dragging (set on .app by App.tsx), else the default token. */
+  grid-template-columns: var(--sidebar-chosen-width, var(--sidebar-width)) minmax(0, 1fr);
   height: 100dvh;
+}
+
+/* Wide screens only: the collapsed sidebar takes no space, and the "Open sidebar"
+   button in the chat header brings it back. (Narrow screens keep the drawer.) */
+@media (min-width: 768px) {
+  .app.sidebar-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app.sidebar-collapsed .sidebar {
+    display: none;
+  }
+
+  .menu-button.menu-button-visible {
+    display: inline-flex;
+  }
 }
 
 .main {
@@ -234,11 +251,50 @@ textarea {
 /* --- Sidebar --------------------------------------------------------------- */
 
 .sidebar {
+  position: relative; /* the resize handle is placed on its right edge */
   display: flex;
   flex-direction: column;
   min-height: 0;
   background: var(--color-surface);
   border-inline-end: 1px solid var(--color-border);
+}
+
+/* The drag handle: an invisible 8px strip over the sidebar's border. On hover, focus or
+   while dragging, a 2px accent line shows where the edge is. */
+.resize-handle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: -4px;
+  z-index: 10;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none; /* a touch drag resizes instead of scrolling the page */
+}
+
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 3px;
+  width: 2px;
+  background: transparent;
+  transition: background-color 120ms;
+}
+
+.resize-handle:hover::after,
+.resize-handle:focus-visible::after,
+body.resizing .resize-handle::after {
+  background: var(--color-accent);
+}
+
+.resize-handle:focus-visible {
+  outline: none; /* the accent line is the focus indicator */
+}
+
+/* While dragging: the resize cursor everywhere, and no accidental text selection. */
+body.resizing {
+  cursor: col-resize;
+  user-select: none;
 }
 
 /* Every sidebar section uses the same inner padding on both sides. */
@@ -606,6 +662,25 @@ textarea {
   color: var(--color-text-muted);
 }
 
+/* A chip that opens its PDF: the same look, plus a quiet hover and a focus outline. */
+.chip-link {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color 120ms,
+    border-color 120ms;
+}
+
+.chip-link:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+}
+
+.chip-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .chip-deleted {
   color: var(--color-text-muted);
 }
@@ -798,6 +873,12 @@ textarea {
   .menu-button,
   .close-button {
     display: inline-flex;
+  }
+
+  /* The drawer has its own close button and a fixed width. */
+  .resize-handle,
+  .collapse-button {
+    display: none;
   }
 
   .column {

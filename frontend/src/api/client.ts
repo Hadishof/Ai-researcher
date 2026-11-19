@@ -91,6 +91,13 @@ export const api = {
   deleteDocument: (documentId: string): Promise<void> =>
     request(`/documents/${documentId}`, { method: "DELETE" }),
 
+  /**
+   * The address of a document's original PDF, for a link that opens it in a new tab.
+   * With a page, "#page=N" asks the browser's PDF viewer to open at that page.
+   */
+  fileUrl: (documentId: string, page?: number): string =>
+    `${API_URL}/documents/${encodeURIComponent(documentId)}/file${page ? `#page=${page}` : ""}`,
+
   // --- Conversations ---
 
   listConversations: (): Promise<ConversationListResponse> => request("/conversations"),

@@ -5,6 +5,7 @@ Every test gets:
 - a fake Gemini client (no real API calls, no API key, no internet)
 - an empty ChromaDB in a temporary folder (your real data is never touched)
 - an empty SQLite conversations database in the same temporary folder
+- an empty folder for the uploaded PDF files, also in the temporary folder
 - test settings that ignore your backend/.env file
 """
 
@@ -27,6 +28,7 @@ from reportlab.pdfgen import canvas  # noqa: E402
 from app.core.config import Settings, get_settings  # noqa: E402
 from app.core.gemini import get_gemini_client  # noqa: E402
 from app.db.conversation_store import ConversationStore, get_conversation_store  # noqa: E402
+from app.db.file_store import FileStore, get_file_store  # noqa: E402
 from app.db.vector_store import VectorStore, get_vector_store  # noqa: E402
 from app.main import app  # noqa: E402
 from app.services.generation import GeminiAnswer, is_hebrew  # noqa: E402
@@ -126,6 +128,7 @@ def settings(tmp_path) -> Settings:
         google_api_key="test-key",
         chroma_path=tmp_path / "chroma_db",
         database_path=tmp_path / "data" / "conversations.db",
+        files_path=tmp_path / "data" / "files",
         max_upload_mb=1,  # keeps the "file too large" test small
     )
 
@@ -143,16 +146,23 @@ def conversation_store(settings) -> ConversationStore:
 
 
 @pytest.fixture
+def file_store(settings) -> FileStore:
+    # Uploaded PDFs go to the temporary folder too, never to backend/data/files.
+    return FileStore(settings.files_path)
+
+
+@pytest.fixture
 def fake_gemini() -> FakeGemini:
     return FakeGemini()
 
 
 @pytest.fixture
-def client(settings, store, conversation_store, fake_gemini):
+def client(settings, store, conversation_store, file_store, fake_gemini):
     """An HTTP client for the app, with the real dependencies replaced by test ones."""
     app.dependency_overrides[get_settings] = lambda: settings
     app.dependency_overrides[get_vector_store] = lambda: store
     app.dependency_overrides[get_conversation_store] = lambda: conversation_store
+    app.dependency_overrides[get_file_store] = lambda: file_store
     app.dependency_overrides[get_gemini_client] = lambda: fake_gemini
     with TestClient(app) as test_client:
         yield test_client

@@ -9,6 +9,7 @@ export interface DocumentResponse {
   pages: number;
   chunks: number;
   conversation_count: number; // how many chats have this document selected
+  has_file: boolean; // the original PDF is stored and can be opened (api.fileUrl)
 }
 
 export interface DocumentListResponse {

@@ -13,7 +13,13 @@ export function textDirection(text: string): "rtl" | "ltr" {
   return first && RIGHT_TO_LEFT.test(first) ? "rtl" : "ltr";
 }
 
-export default function Message({ message }: { message: MessageResponse }) {
+interface MessageProps {
+  message: MessageResponse;
+  // Ids of the documents whose PDF can be opened: their source chips become links.
+  viewable: ReadonlySet<string>;
+}
+
+export default function Message({ message, viewable }: MessageProps) {
   if (message.role === "user") {
     return (
       <p className="question" dir="auto">
@@ -35,7 +41,7 @@ export default function Message({ message }: { message: MessageResponse }) {
     >
       {notFound && <p className="answer-label">Not in the selected documents</p>}
       <p className="answer-text">{message.content}</p>
-      <SourceChips sources={message.sources} />
+      <SourceChips sources={message.sources} viewable={viewable} />
     </div>
   );
 }

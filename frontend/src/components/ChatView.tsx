@@ -1,7 +1,8 @@
 // The main area: the chat's documents at the top, the message history, and the question box.
 
 import { LoaderCircle, Menu, Upload } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { Ref } from "react";
 
 import { ApiError } from "../api/client";
 import type { ConversationDocument, DocumentResponse, MessageResponse } from "../api/types";
@@ -25,7 +26,11 @@ interface ChatViewProps {
   onSend: (question: string) => Promise<void>;
   onChangeDocuments: (documents: ConversationDocument[]) => Promise<void>;
   onUploadClick: () => void;
-  onOpenSidebar: () => void; // narrow screens only
+  onOpenSidebar: () => void;
+  // Wide screens: the sidebar was collapsed, so show the button that brings it back.
+  // (Narrow screens always show it: there the sidebar is a drawer.)
+  sidebarCollapsed: boolean;
+  openSidebarButtonRef: Ref<HTMLButtonElement>; // App moves the keyboard focus here on collapse
 }
 
 export default function ChatView({
@@ -36,7 +41,14 @@ export default function ChatView({
   onChangeDocuments,
   onUploadClick,
   onOpenSidebar,
+  sidebarCollapsed,
+  openSidebarButtonRef,
 }: ChatViewProps) {
+  // Source chips link to a PDF only if the document is still in the library with its file.
+  const viewable = useMemo(
+    () => new Set(library.filter((d) => d.has_file).map((d) => d.document_id)),
+    [library],
+  );
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,9 +92,10 @@ export default function ChatView({
         <div className="column chat-header-inner">
           <div className="chat-title-row">
             <Button
+              ref={openSidebarButtonRef}
               variant="ghost"
               size="sm"
-              className="menu-button"
+              className={`menu-button ${sidebarCollapsed ? "menu-button-visible" : ""}`}
               aria-label="Open sidebar"
               icon={<Menu size={18} aria-hidden />}
               onClick={onOpenSidebar}
@@ -131,7 +144,9 @@ export default function ChatView({
               <p>Ask a question about the selected documents.</p>
             </div>
           ) : (
-            chat.messages.map((message) => <Message key={message.id} message={message} />)
+            chat.messages.map((message) => (
+              <Message key={message.id} message={message} viewable={viewable} />
+            ))
           )}
 
           {sending && (

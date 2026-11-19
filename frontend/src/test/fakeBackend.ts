@@ -14,6 +14,7 @@ export const HANDBOOK: DocumentResponse = {
   pages: 4,
   chunks: 4,
   conversation_count: 1,
+  has_file: true, // its PDF can be opened
 };
 
 export const POLICY: DocumentResponse = {
@@ -22,6 +23,7 @@ export const POLICY: DocumentResponse = {
   pages: 2,
   chunks: 3,
   conversation_count: 0,
+  has_file: false, // uploaded before PDFs were stored: no file to open
 };
 
 export function summary(id: number, title: string | null): ConversationSummary {
