@@ -1,3 +1,5 @@
+[![CI](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml/badge.svg?branch=v2)](https://github.com/Hadishof/Ai-researcher/actions/workflows/ci.yml?query=branch%3Av2)
+
 🕵️‍♂️ AI Document Researcher (Full-Stack RAG)
   A professional Retrieval-Augmented Generation (RAG) platform that allows users to perform high-speed,
   factual research on private PDF documents. This project demonstrates the ability to build a full-stack AI product,

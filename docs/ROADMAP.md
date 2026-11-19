@@ -173,9 +173,9 @@ run the tests automatically on GitHub after every push.
 - [ ] `Dockerfile` for the frontend
 - [ ] `docker-compose.yml` that starts both together, with both databases (ChromaDB and SQLite) saved between restarts
 - [ ] API key passed in through environment variables, never built into the image
-- [ ] GitHub Actions workflow that runs the backend tests on every push and pull request
-- [ ] The same workflow checks that the frontend builds
-- [ ] Test status badge ready for the README
+- [x] GitHub Actions workflow (`.github/workflows/ci.yml`) that runs the backend tests on every push and pull request, with no API key (Gemini is faked in the tests)
+- [x] The same workflow runs the evaluation tests, and the frontend tests and build
+- [x] Test status badge at the top of the README
 
 ## Phase 6: Professional README, then deploy
 
