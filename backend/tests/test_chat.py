@@ -45,8 +45,8 @@ def hr_pages(upload, make_pdf, fake_gemini) -> str:
     Upload 4 pages whose distances from the question "salary" are known:
 
     page 1 salary   0.00  best match                      -> kept
-    page 2 pension  0.03  within margin (0.05) of best    -> kept
-    page 3 bonus    0.15  passes MAX_DISTANCE (0.38), but
+    page 2 pension  0.03  within margin (0.10) of best    -> kept
+    page 3 bonus    0.15  passes MAX_DISTANCE (0.34), but
                           too far from the best match     -> dropped by the RELATIVE filter
     page 4 parking  0.50  fails MAX_DISTANCE              -> dropped by the ABSOLUTE filter
     """

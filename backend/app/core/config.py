@@ -35,21 +35,28 @@ class Settings(BaseSettings):
     # into a standalone one. 0 turns the rewrite off.
     history_messages: int = Field(default=6, ge=0)
 
-    # Chunking: the size and overlap of each text piece, in characters
-    chunk_size: int = Field(default=1000, gt=0)
-    chunk_overlap: int = Field(default=150, ge=0)
+    # The defaults below for chunk size, MAX_DISTANCE and RELATIVE_MARGIN were chosen by
+    # fixed rules on the evaluation's dev set. Evidence:
+    # eval/results/2026-11-19_225052_retrieval.md
+
+    # Chunking: the size and overlap of each text piece, in characters.
+    # 500 had the best ranking (MRR) on the dev set. Overlap stays 15% of the size.
+    chunk_size: int = Field(default=500, gt=0)
+    chunk_overlap: int = Field(default=75, ge=0)
 
     # Retrieval
     top_k: int = Field(default=5, gt=0)
     # Cosine distance: 0 = same meaning, 1 = unrelated, 2 = opposite.
     # Chunks farther than this from the question are treated as not relevant.
-    # Starting value from a quick test: relevant chunks scored about 0.24-0.35,
-    # off-topic questions about 0.41-0.48. Phase 4 (evaluation) will tune it properly.
-    max_distance: float = Field(default=0.38, ge=0, le=2)
+    # Fragile: 0.34 vs 0.38 was decided by a single dev question. The filter only
+    # blocks clearly unrelated questions; "not found" questions close to the
+    # documents' topics get through, and the LLM has to answer "not found" itself.
+    max_distance: float = Field(default=0.34, ge=0, le=2)
     # A chunk is also dropped if it is more than this much farther than the best chunk.
     # This removes "somewhat related" pages when one page clearly matches best.
-    # Starting value; Phase 4 (evaluation) will tune it.
-    relative_margin: float = Field(default=0.05, ge=0, le=2)
+    # 0.10 is the smallest margin that kept every correct page, and both pages of
+    # every conflict question (so the LLM can report both sides), on the dev set.
+    relative_margin: float = Field(default=0.10, ge=0, le=2)
 
     # Uploads
     max_upload_mb: int = Field(default=20, gt=0)
