@@ -1,5 +1,28 @@
+# Secrets: the real settings files (the .env.example files are committed)
 .env
+
+# Python
 .venv/
 __pycache__/
+
+# Vector database (backend/chroma_db/, the app's uploaded documents as chunks)
 chroma_db/
+
+# PDFs are user data and are never committed...
 *.pdf
+# ...except the synthetic evaluation PDFs, shared so evaluation runs can be reproduced
+!eval/data/*.pdf
+
+# Evaluation caches (saved Gemini embeddings and answers)
+eval/.cache/
+
+# Test coverage data
+.coverage
+htmlcov/
+
+# App data: saved conversations (SQLite) and the uploaded PDF files
+backend/data/
+
+# Frontend: installed packages and build output
+node_modules/
+frontend/dist/

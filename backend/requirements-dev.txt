@@ -1,0 +1,13 @@
+# Packages needed only to run the tests (not in production).
+# Install with: pip install -r requirements-dev.txt
+-r requirements.txt
+
+# Test runner and coverage report
+pytest==9.2.0
+pytest-cov==7.1.0
+
+# TestClient (sends requests to the app in memory)
+httpx==0.28.1
+
+# Builds small PDF files inside the tests
+reportlab==5.1.0

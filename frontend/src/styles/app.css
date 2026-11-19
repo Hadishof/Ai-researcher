@@ -1,0 +1,887 @@
+/*
+ * Layout and component styles. Colors, spacing and fonts come only from tokens.css.
+ * Logical properties (padding-inline-start, border-inline-start...) flip automatically
+ * for right-to-left Hebrew text.
+ */
+
+/* --- Base ------------------------------------------------------------------ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+p,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em; /* Plex Mono looks a little larger than Plex Sans */
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation-duration: 2.4s;
+  }
+}
+
+/* --- Layout: sidebar + main ------------------------------------------------ */
+
+.app {
+  display: grid;
+  /* The width chosen by dragging (set on .app by App.tsx), else the default token. */
+  grid-template-columns: var(--sidebar-chosen-width, var(--sidebar-width)) minmax(0, 1fr);
+  height: 100dvh;
+}
+
+/* Wide screens only: the collapsed sidebar takes no space, and the "Open sidebar"
+   button in the chat header brings it back. (Narrow screens keep the drawer.) */
+@media (min-width: 768px) {
+  .app.sidebar-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app.sidebar-collapsed .sidebar {
+    display: none;
+  }
+
+  .menu-button.menu-button-visible {
+    display: inline-flex;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* --- Buttons --------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 36px;
+  padding: 0 var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 120ms,
+    border-color 120ms,
+    color 120ms;
+}
+
+.btn-sm {
+  height: 28px;
+  padding: 0 var(--space-1);
+  font-size: var(--text-xs);
+}
+
+/* A button with only an icon is square. */
+.btn-icon {
+  width: 36px;
+  padding: 0;
+}
+
+.btn-sm.btn-icon {
+  width: 28px;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn[aria-busy="true"] {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--color-border-strong);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+}
+
+.btn-danger {
+  background: var(--color-danger);
+  color: var(--color-on-danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+}
+
+/* Ghost: no border or background; for small icon buttons and quiet actions. */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+
+.btn-ghost.ghost-danger:hover:not(:disabled) {
+  color: var(--color-danger);
+}
+
+/* --- Notices and empty states ---------------------------------------------- */
+
+.notice {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+}
+
+.notice-error {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
+
+.notice-success {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.empty {
+  padding: var(--space-1) 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+/* --- Sidebar --------------------------------------------------------------- */
+
+.sidebar {
+  position: relative; /* the resize handle is placed on its right edge */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--color-surface);
+  border-inline-end: 1px solid var(--color-border);
+}
+
+/* The drag handle: an invisible 8px strip over the sidebar's border. On hover, focus or
+   while dragging, a 2px accent line shows where the edge is. */
+.resize-handle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: -4px;
+  z-index: 10;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none; /* a touch drag resizes instead of scrolling the page */
+}
+
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 3px;
+  width: 2px;
+  background: transparent;
+  transition: background-color 120ms;
+}
+
+.resize-handle:hover::after,
+.resize-handle:focus-visible::after,
+body.resizing .resize-handle::after {
+  background: var(--color-accent);
+}
+
+.resize-handle:focus-visible {
+  outline: none; /* the accent line is the focus indicator */
+}
+
+/* While dragging: the resize cursor everywhere, and no accidental text selection. */
+body.resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* Every sidebar section uses the same inner padding on both sides. */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-half);
+  padding: var(--space-3) var(--space-3) var(--space-1);
+}
+
+.app-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: var(--text-md);
+}
+
+.close-button {
+  display: none; /* only on narrow screens */
+}
+
+.sidebar-new {
+  padding: var(--space-1) var(--space-3) var(--space-2);
+}
+
+.sidebar-new .btn {
+  width: 100%;
+}
+
+.section-title {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+/* The chat list takes the free space and scrolls; the library keeps at most ~45%. */
+.chats {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-height: 0;
+  padding: 0 var(--space-3) var(--space-2);
+  overflow-y: auto;
+}
+
+.library {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 45%;
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+
+/* Rows have their own inner padding (for the hover background), so they reach out
+   by that amount: their text then lines up with the section titles above them. */
+.conversation-list,
+.document-list {
+  margin-inline: calc(-1 * var(--space-1));
+}
+
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.conversation-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-half);
+  padding-inline-end: var(--space-half);
+  border-radius: var(--radius);
+}
+
+.conversation-row:hover {
+  background: var(--color-surface-muted);
+}
+
+.conversation-row.active {
+  background: var(--color-accent-subtle);
+}
+
+.conversation-row.active .conversation-open {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.conversation-open {
+  flex: 1;
+  min-width: 0;
+  padding: 6px var(--space-1);
+  border: 0;
+  border-radius: var(--radius);
+  background: none;
+  font-size: var(--text-sm);
+  text-align: start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.conversation-open:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+/* Row actions (rename, delete) appear on hover or keyboard focus, in the chat list and
+   the library; always on touch screens, which have no hover. */
+.row-actions {
+  display: flex;
+  visibility: hidden;
+}
+
+.conversation-row:hover .row-actions,
+.conversation-row:focus-within .row-actions,
+.conversation-row.active .row-actions,
+.document-row:hover .row-actions,
+.document-row:focus-within .row-actions {
+  visibility: visible;
+}
+
+@media (hover: none) {
+  .row-actions {
+    visibility: visible;
+  }
+}
+
+.rename-form {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 2px;
+}
+
+.rename-input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+
+.rename-input:focus {
+  outline: none;
+}
+
+.delete-all {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+  margin-inline-start: calc(-1 * var(--space-1)); /* text lines up with the chat titles */
+}
+
+.document-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.document-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px var(--space-1);
+  border-radius: var(--radius);
+}
+
+.document-row:hover {
+  background: var(--color-surface-muted);
+}
+
+.document-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.document-name {
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-meta {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+/* --- Chat area ------------------------------------------------------------- */
+
+.chat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* The centered column: the chat header, the messages and the question box all use it,
+   so they share one left edge. */
+.column {
+  width: 100%;
+  max-width: calc(var(--content-width) + 2 * var(--space-3));
+  margin-inline: auto;
+  padding-inline: var(--space-3);
+}
+
+.chat-header {
+  padding-block: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chat-header-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.chat-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.menu-button {
+  display: none; /* only on narrow screens */
+}
+
+.chat-title {
+  min-width: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.thread {
+  padding-block: var(--space-3) var(--space-4);
+}
+
+.chat-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block: var(--space-1) var(--space-3);
+}
+
+/* Empty states */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.empty-state h2 {
+  color: var(--color-text);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+/* Messages: a document-like column, not chat bubbles. */
+
+.question {
+  margin-top: var(--space-4);
+  padding-inline-start: var(--space-2);
+  border-inline-start: 2px solid var(--color-border-strong);
+  font-weight: 500;
+  white-space: pre-wrap;
+}
+
+.question:first-child {
+  margin-top: 0;
+}
+
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.answer-text {
+  line-height: 1.65;
+  white-space: pre-wrap; /* keep the answer's line breaks */
+}
+
+.answer-not-found {
+  padding-inline-start: var(--space-2);
+  border-inline-start: 2px dashed var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+.answer-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Chips: sources under answers, and the chat's documents in the header. */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-half) var(--space-1);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-half);
+  max-width: 100%;
+  padding: 2px var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  font-size: var(--text-xs);
+}
+
+.chip-name {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip-page .mono {
+  color: var(--color-accent); /* citations use the accent */
+}
+
+.chip-sep {
+  color: var(--color-text-muted);
+}
+
+/* A chip that opens its PDF: the same look, plus a quiet hover and a focus outline. */
+.chip-link {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color 120ms,
+    border-color 120ms;
+}
+
+.chip-link:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border-strong);
+}
+
+.chip-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.chip-deleted {
+  color: var(--color-text-muted);
+}
+
+.chip-deleted .chip-name {
+  text-decoration: line-through;
+}
+
+.chip-deleted .mono {
+  color: var(--color-text-muted);
+}
+
+/* Document picker */
+
+.picker {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+}
+
+.picker-panel {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  inset-inline-start: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: min(360px, calc(100vw - 2 * var(--space-2)));
+  padding: var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.picker-hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.picker-list {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.picker-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px var(--space-half);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+}
+
+.picker-option:hover {
+  background: var(--color-surface-muted);
+}
+
+.picker-option input {
+  accent-color: var(--color-accent);
+}
+
+.picker-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picker-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+/* The question box */
+
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.composer:focus-within {
+  border-color: var(--color-accent);
+}
+
+.composer-input {
+  flex: 1;
+  min-height: 36px;
+  padding: 6px var(--space-1);
+  border: 0;
+  background: transparent;
+  line-height: 1.5;
+  resize: none;
+}
+
+.composer-input:focus {
+  outline: none; /* the whole box shows the focus instead */
+}
+
+.composer-input:disabled {
+  cursor: not-allowed;
+}
+
+.composer-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* --- Dialog ---------------------------------------------------------------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--space-2);
+  background: var(--color-overlay);
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: min(440px, 100%);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.dialog-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.dialog-message {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+/* --- Narrow screens: the sidebar becomes a drawer --------------------------- */
+
+.backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 40;
+    width: min(var(--sidebar-width), 85vw);
+    transform: translateX(-100%);
+    transition: transform 160ms ease-out;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: block;
+    background: var(--color-overlay);
+  }
+
+  .menu-button,
+  .close-button {
+    display: inline-flex;
+  }
+
+  /* The drawer has its own close button and a fixed width. */
+  .resize-handle,
+  .collapse-button {
+    display: none;
+  }
+
+  .column {
+    padding-inline: var(--space-2);
+  }
+}

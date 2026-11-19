@@ -1,0 +1,6 @@
+# Packages for the evaluation (eval/ folder only, never the backend).
+# Install with: pip install -r requirements-eval.txt
+-r ../backend/requirements-dev.txt
+
+# LangChain's text splitter, only to compare it with our own chunker
+langchain-text-splitters==1.1.3

@@ -1,0 +1,119 @@
+"""Turns text into Gemini embeddings and finds the chunks most relevant to a question."""
+
+import logging
+import time
+
+from google import genai
+from google.genai import types
+from google.genai.errors import ClientError
+
+from app.core.config import Settings
+from app.core.gemini import MAX_RETRIES, seconds_to_wait
+from app.db.vector_store import SearchResult, VectorStore
+
+logger = logging.getLogger(__name__)
+
+# Gemini accepts at most 100 texts per embedding request.
+EMBED_BATCH_SIZE = 100
+
+
+def _embed_batch(
+    client: genai.Client, batch: list[str], model: str, task_type: str
+) -> list[list[float]]:
+    retries = 0
+    while True:
+        try:
+            response = client.models.embed_content(
+                model=model,
+                contents=batch,
+                config=types.EmbedContentConfig(task_type=task_type),
+            )
+            return [embedding.values for embedding in response.embeddings]
+        except ClientError as error:
+            if error.code != 429 or retries == MAX_RETRIES:
+                raise
+            retries += 1
+            time.sleep(seconds_to_wait(error))
+
+
+def embed_texts(
+    client: genai.Client,
+    texts: list[str],
+    model: str,
+    task_type: str,
+) -> list[list[float]]:
+    """
+    Turn each text into a list of numbers (an embedding) that captures its meaning.
+
+    task_type tells Gemini how the text will be used:
+    "RETRIEVAL_DOCUMENT" for chunks we store, "RETRIEVAL_QUERY" for questions.
+    Gemini tunes each embedding for its role, which improves search quality.
+    """
+    embeddings = []
+    for start in range(0, len(texts), EMBED_BATCH_SIZE):
+        batch = texts[start : start + EMBED_BATCH_SIZE]
+        embeddings.extend(_embed_batch(client, batch, model, task_type))
+    return embeddings
+
+
+def find_relevant_chunks(
+    question: str,
+    document_ids: list[str],
+    store: VectorStore,
+    client: genai.Client,
+    settings: Settings,
+) -> list[SearchResult]:
+    """
+    Return the closest chunks to the question, dropping any that are not close enough.
+
+    Only chunks of the documents in `document_ids` are searched (the documents
+    selected for the conversation), so information from other documents never mixes in.
+    """
+    query_embedding = embed_texts(
+        client, [question], model=settings.embedding_model, task_type="RETRIEVAL_QUERY"
+    )[0]
+    results = store.search(query_embedding, top_k=settings.top_k, document_ids=document_ids)
+    return filter_results(results, settings.max_distance, settings.relative_margin)
+
+
+def filter_results(
+    results: list[SearchResult], max_distance: float, relative_margin: float
+) -> list[SearchResult]:
+    """
+    Keep only the search results that are close enough to the question.
+
+    `results` must be sorted closest first (as Chroma returns them).
+    A chunk is kept only if it passes both filters:
+    - absolute: its distance is at most `max_distance`
+    - relative: its distance is at most the best chunk's distance + `relative_margin`
+
+    This is a separate function so the evaluation can try many limits on the
+    same search results, without searching (or calling Gemini) again.
+    """
+    if not results:
+        return []
+
+    # Chroma returns results closest first, so the first one is the best match.
+    relative_limit = results[0].distance + relative_margin
+    limit = min(max_distance, relative_limit)
+
+    kept = []
+    for result in results:
+        keep = result.distance <= limit
+        logger.debug(
+            "%s page %d: distance %.3f -> %s",
+            result.filename,
+            result.page,
+            result.distance,
+            "kept" if keep else "dropped",
+        )
+        if keep:
+            kept.append(result)
+    logger.debug(
+        "Limits: max_distance=%.3f, relative=%.3f (best %.3f + margin %.3f)",
+        max_distance,
+        relative_limit,
+        results[0].distance,
+        relative_margin,
+    )
+    return kept
